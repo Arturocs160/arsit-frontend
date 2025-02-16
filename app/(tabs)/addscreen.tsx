@@ -5,11 +5,53 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image,
 import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import axios from 'axios';
 
 
 export default function DeviceScreen() {
 
-  const [notes, setNotes] = useState('');
+  const fecha = new Date()
+
+  const [notas, setNotas] = useState<string>('');
+  const [cultivo, setCultivo] = useState<string>('');
+  const [fechaActual, setFechaActual] = useState<Date>(fecha);
+  const [temperaturaMin, setTemperaturaMin] = useState<number>(40);
+  const [temperaturaMax, setTemperaturaMax] = useState<number>(30);
+  const [humedadMax, setHumedadMax] = useState<number>(60);
+  const [humedadMin, setHumedadMin] = useState<number>(25);
+
+  async function guardarCultivo(notas: string, cultivo: string, temperaturaMin: number, temperaturaMax: number, humedadMin: number, humedadMax: number, fechaActual: Date) {
+
+    const fechaFormateada = fechaActual.toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+
+    if (!cultivo || !temperaturaMin || !temperaturaMax || !humedadMin || !humedadMax || !fechaActual) {
+      alert("Para guardar se necesita llenar todos los campos en los que se requiere información")
+    } else {
+      const data = {
+        cultivoId: undefined,
+        cultivo: cultivo,
+        invernaderoId: undefined, 
+        fecha_siembra: fechaFormateada,
+        notasId: undefined,
+        temperaturaMin: temperaturaMin,
+        temperaturaMax: temperaturaMax,
+        humedadMax: humedadMax,
+        humedadMin: humedadMin,
+      }
+  
+      const result = await axios.post("http://192.168.1.37:3000/cultivos", data)
+      
+      if(result.status === 200) {
+        alert("Datos guardados")
+      } else {
+        alert("Ocurrio un error, favor de intentar más tarde")
+      }
+    }
+  }
 
   const router = useRouter();
 
@@ -19,7 +61,7 @@ export default function DeviceScreen() {
 
       <View style={styles.headerContainer}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()}>
+          <TouchableOpacity onPress={() => router.push('/(tabs)/panelscreen')}>
             <Image
               style={[{ width: 90, height: 50 }]}
               source={require("./../../assets/images/logoarsit.png")}
@@ -36,12 +78,13 @@ export default function DeviceScreen() {
 
       <View style={styles.inputContainer}>
         {/* <Text style={styles.label}>Nombre</Text> */}
-        <TextInput style={styles.input} placeholder="Nombre" placeholderTextColor="#29463D" />
+        <TextInput style={styles.input} placeholder="Nombre" placeholderTextColor="#29463D" value={cultivo}
+          onChangeText={setCultivo} />
       </View>
 
       <View style={styles.inputContainer}>
         {/* <Text style={styles.label}>Cultivo</Text> */}
-        <TextInput style={styles.input} placeholder="Cultivo" placeholderTextColor="#29463D" />
+        <TextInput style={styles.input} placeholder="Nombre dispositivo" placeholderTextColor="#29463D" />
       </View>
 
       <View style={styles.controlContainer}>
@@ -67,12 +110,12 @@ export default function DeviceScreen() {
           multiline
           placeholder=""
           placeholderTextColor="#2D4B41"
-          value={notes}
-          onChangeText={setNotes}
+          value={notas}
+          onChangeText={setNotas}
         />
       </View>
 
-      <TouchableOpacity style={styles.saveButton}>
+      <TouchableOpacity style={styles.saveButton} onPress={()=> guardarCultivo(notas, cultivo, temperaturaMin, temperaturaMax, humedadMin, humedadMax, fechaActual)}>
         <Text style={styles.saveButtonText}>GUARDAR</Text>
       </TouchableOpacity>
 
@@ -97,7 +140,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     alignItems: 'flex-start',
     padding: 20,
-    paddingTop: 28
+    paddingTop: 28, 
   },
   headerContainer: {
     flexDirection: 'row',

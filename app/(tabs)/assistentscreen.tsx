@@ -18,7 +18,7 @@ export default function DeviceScreen() {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.headerContainer}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()}>
+          <TouchableOpacity onPress={() => router.push('/(tabs)/panelscreen')}>
             <Image
               style={[{ width: 90, height: 50 }]}
               source={require("./../../assets/images/logoarsit.png")}
