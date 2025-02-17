@@ -163,11 +163,16 @@ export default function ParametrosScreen(){
         </View>
         <View style={styles.tituloContainer}> 
             <Text style={styles.titulo}>Invernadero1 </Text>
-            <Ionicons name="pencil" size={20} color="#29463D" />
+            <TouchableOpacity onPress={() => router.push('/(tabs)/updatescreen')}>
+               <Ionicons name="pencil" size={20} color="#29463D"/>
+            </TouchableOpacity>
+           
         </View>
         <View style={styles.tituloContainer}> 
             <Text style={styles.titulo}>Cultivo1 </Text>
-            <Ionicons name="pencil" size={20} color="#29463D" />
+            <TouchableOpacity onPress={() => router.push('/(tabs)/updatescreen')}>
+               <Ionicons name="pencil" size={20} color="#29463D"/>
+            </TouchableOpacity>
         </View>
         <View style={styles.notasContainer}>
             <Text>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ipsa unde odio odit quaerat delectus maxime repellat eaque obcaecati consequuntur quibusdam corrupti aliquam reiciendis voluptatum excepturi, pariatur amet reprehenderit molestiae placeat.</Text>
