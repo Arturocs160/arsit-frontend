@@ -90,7 +90,7 @@ export default function PanelScreen({ }) {
                 // dividerSize = {1}
                 // backgroundColor = {}
                 />
-                <Text>{Data[0].value}%</Text>
+                {/* <Text>{Data[0].value}%</Text> */}
               </View>
             </TouchableOpacity>
           </View>
