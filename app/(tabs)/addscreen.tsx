@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import axios from 'axios';
+import { Picker } from '@react-native-picker/picker';
 
 
 export default function DeviceScreen() {
@@ -54,7 +55,7 @@ export default function DeviceScreen() {
   }
 
   const router = useRouter();
-
+  const [selectedValue, setSelectedValue] = useState("java");
   return (
     <View style={styles.container}>
       {/* <Button title="Volver a Home" onPress={() => router.back()} /> */}
@@ -76,30 +77,47 @@ export default function DeviceScreen() {
         </TouchableOpacity>
       </View>
 
+      
+      <View style= {styles.selectDispositivo}>
+      <Picker
+      placeholder='Dispositivo'
+        selectedValue={selectedValue}
+        style={styles.picker}
+        onValueChange={(itemValue) => setSelectedValue(itemValue)}
+      >
+        <Picker.Item label="Dispositivo 1" value="1" />
+        <Picker.Item label="Dispositivo 2" value="2" />
+        <Picker.Item label="Dispositivo 3" value="3" />
+        <Picker.Item label="Dispositivo 4" value="4" />
+      </Picker>
+      </View>
       <View style={styles.inputContainer}>
         {/* <Text style={styles.label}>Nombre</Text> */}
-        <TextInput style={styles.input} placeholder="Nombre" placeholderTextColor="#29463D" value={cultivo}
+        <TextInput style={styles.input} placeholder="Invernadero" placeholderTextColor="#29463D" value={cultivo}
           onChangeText={setCultivo} />
       </View>
-
       <View style={styles.inputContainer}>
         {/* <Text style={styles.label}>Cultivo</Text> */}
-        <TextInput style={styles.input} placeholder="Nombre dispositivo" placeholderTextColor="#29463D" />
+        <TextInput style={styles.input} placeholder="Cultivo" placeholderTextColor="#29463D" />
       </View>
 
       <View style={styles.controlContainer}>
         <Text style={styles.label}>Temperatura</Text>
         <View style={styles.buttons}>
           <TouchableOpacity style={styles.button}><Ionicons name="chevron-up" size={20} color="#29463D" /></TouchableOpacity>
+          <Text style={styles.buttonText}>14°</Text>
           <TouchableOpacity style={styles.button}><Ionicons name="chevron-down" size={20} color="#29463D" /></TouchableOpacity>
+          <Text style={styles.buttonText}>3°</Text>
         </View>
       </View>
 
       <View style={styles.controlContainer}>
         <Text style={styles.label}>Humedad</Text>
         <View style={styles.buttons}>
-          <TouchableOpacity style={styles.button}><Ionicons name="chevron-up" size={20} color="#29463D" /></TouchableOpacity>
+        <TouchableOpacity style={styles.button}><Ionicons name="chevron-up" size={20} color="#29463D" /></TouchableOpacity>
+          <Text style={styles.buttonText}>14°</Text>
           <TouchableOpacity style={styles.button}><Ionicons name="chevron-down" size={20} color="#29463D" /></TouchableOpacity>
+          <Text style={styles.buttonText}>3°</Text>
         </View>
       </View>
 
@@ -145,13 +163,24 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%'
   },
+  selectDispositivo:{
+    width: '90%',
+    marginHorizontal: '5%', 
+    borderRadius: 50
+  },
+  picker: {
+    height: 50,
+    width: '100%',
+    backgroundColor: '#CCCCCC',
+    marginBottom: 20, 
+  },
   headerContainer: {
     flexDirection: 'row',
     alignItems: "center",
     justifyContent: 'space-between',
     width: '90%',
     height: 50,
-    marginBottom: 50,
+    marginBottom: 20,
     marginTop: 25,
     marginLeft: 10
   },
@@ -169,9 +198,16 @@ const styles = StyleSheet.create({
     color: '#29463D',
     marginTop: -8
   },
+  buttonText: {
+    padding: 10,
+    fontSize: 15,
+    fontWeight: '600',
+    color: "#29463D",
+    borderRadius: 8,
+  },
   inputContainer: {
     width: '90%',
-    marginBottom: 40,
+    marginBottom: 20,
     marginHorizontal: '5%'
   },
   label: {
@@ -203,7 +239,7 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#CCCCCC',
     padding: 10,
-    marginLeft: 30,
+    marginLeft: 5,
     borderRadius: 8,
   },
   notesContainer: {

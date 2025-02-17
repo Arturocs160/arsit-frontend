@@ -64,7 +64,6 @@ export default function Weather() {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: { 
     alignItems: 'center', 
@@ -73,7 +72,8 @@ const styles = StyleSheet.create({
   },
   temp: { 
     fontSize: 40, 
-    fontWeight: 'bold' 
+    fontWeight: 'ultralight', 
+    color: 'white'
   },
   icon: { 
     width: 100, 

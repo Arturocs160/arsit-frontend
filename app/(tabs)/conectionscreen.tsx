@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image,
 import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import Entypo from '@expo/vector-icons/Entypo';
 
 export default function DeviceScreen() {
     const [notes, setNotes] = useState('');
@@ -47,8 +48,11 @@ export default function DeviceScreen() {
                             />
                             <Text style={styles.deviceName}>{device.name}</Text>
                             <TouchableOpacity /*onPress={}*/>
+                            <View style={styles.iconos}>
                                 <Ionicons name="pencil" size={20} color="#29463D" />
-                            </TouchableOpacity>
+                                <Entypo name="trash" size={24} color="black" /> 
+                            </View>
+                                                           </TouchableOpacity>
                         </View>
                     ))}
 
@@ -92,6 +96,9 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '100%',
     },
+    iconos: {
+    flexDirection: 'row'
+    },
     headerContainer: {
         flexDirection: 'row',
         alignItems: "center",
@@ -126,7 +133,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         width: '100%',
-        height: 40,
+        height: 50,
         backgroundColor: 'none',
         padding: 10,
         borderRadius: 10,

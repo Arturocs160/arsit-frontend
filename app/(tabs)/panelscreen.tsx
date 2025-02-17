@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
     borderRadius: "10%",
     boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 12px',
     marginHorizontal: "5%",
-    backgroundColor: 'rgb(130, 241, 204)',
+    backgroundColor: 'rgb(113, 232, 192)',
     marginTop: 15
   },
   logo: {
