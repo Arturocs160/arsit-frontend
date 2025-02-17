@@ -15,87 +15,92 @@ export default function DeviceScreen() {
     ]);
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.container}>
+            <View style={styles.general}>
 
-            <View style={styles.headerContainer}>
-                <View style={styles.header}>
-                    <TouchableOpacity onPress={() => router.push('/(tabs)/panelscreen')}>
-                        <Image
-                            style={[{ width: 90, height: 50 }]}
-                            source={require("./../../assets/images/logoarsit.png")}
-                        />
-                        <Text
-                            style={styles.welcome}
-                        >Bienvenido</Text>
-                    </TouchableOpacity>
-                </View>
-                <TouchableOpacity onPress={() => router.back()}>
-                <Ionicons name="arrow-back" size={30} color="#2D4B41" style={styles.backIcon} />
-                </TouchableOpacity>
-
-            </View>
-            <View style={styles.textContainer}>
-
-                {devices.map((device) => (
-                    <View key={device.id} style={styles.deviceRow}>
-                        <TouchableOpacity
-                            style={[styles.checkbox, device.selected && styles.checkboxSelected]}
-                            onPress={() =>
-                                setDevices(devices.map(d => d.id === device.id ? { ...d, selected: !d.selected } : d))
-                            }
-                        />
-                        <Text style={styles.deviceName}>{device.name}</Text>
-                        <TouchableOpacity /*onPress={}*/>
-                            <Ionicons name="pencil" size={20} color="#29463D" />
+                <View style={styles.headerContainer}>
+                    <View style={styles.header}>
+                        <TouchableOpacity onPress={() => router.push('/(tabs)/panelscreen')}>
+                            <Image
+                                style={[{ width: 90, height: 50 }]}
+                                source={require("./../../assets/images/logoarsit.png")}
+                            />
+                            <Text
+                                style={styles.welcome}
+                            >Bienvenido</Text>
                         </TouchableOpacity>
                     </View>
-                ))}
+                    <TouchableOpacity onPress={() =>router.push('/(tabs)/panelscreen')}>
+                        <Ionicons name="arrow-back" size={30} color="#2D4B41" style={styles.backIcon} />
+                    </TouchableOpacity>
 
+                </View>
+                <View style={styles.textContainer}>
+
+                    {devices.map((device) => (
+                        <View key={device.id} style={styles.deviceRow}>
+                            <TouchableOpacity
+                                style={[styles.checkbox, device.selected && styles.checkboxSelected]}
+                                onPress={() =>
+                                    setDevices(devices.map(d => d.id === device.id ? { ...d, selected: !d.selected } : d))
+                                }
+                            />
+                            <Text style={styles.deviceName}>{device.name}</Text>
+                            <TouchableOpacity /*onPress={}*/>
+                                <Ionicons name="pencil" size={20} color="#29463D" />
+                            </TouchableOpacity>
+                        </View>
+                    ))}
+
+                </View>
+
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Nombre"
+                        placeholderTextColor="#29463D"
+                    />
+                </View>
+
+                <TouchableOpacity style={styles.saveButton}>
+                    <Text style={styles.saveButtonText}>GUARDAR</Text>
+                </TouchableOpacity>
             </View>
-
-            <View style={styles.inputContainer}>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Nombre"
-                    placeholderTextColor="#29463D"
-                />
-            </View>
-
-            <TouchableOpacity style={styles.saveButton}>
-                <Text style={styles.saveButtonText}>GUARDAR</Text>
-            </TouchableOpacity>
-
             <View style={styles.footer}>
-                            <TouchableOpacity onPress={() => router.push('/')}>
-                              <Image source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => router.push('/(tabs)/addscreen')}>
-                              <Image source={require("../../assets/images/icons/mas.png")} style={styles.iconsFooter} />
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => router.push('/(tabs)/assistentscreen')}>
-                              <Image source={require("../../assets/images/icons/asistencia.png")} style={styles.iconsFooter} />
-                            </TouchableOpacity>
-                    </View>
-        </ScrollView>
+                <TouchableOpacity>
+                    <Image source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => router.push('/(tabs)/addscreen')}>
+                    <Image source={require("../../assets/images/icons/mas.png")} style={styles.iconsFooter} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => router.push('/(tabs)/assistentscreen')}>
+                    <Image source={require("../../assets/images/icons/asistencia.png")} style={styles.iconsFooter} />
+                </TouchableOpacity>
+            </View>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flexGrow: 1,
+        flex: 1,
         backgroundColor: '#FFFFFF',
         alignItems: 'flex-start',
-        padding: 20,
         paddingTop: 28
+    },
+    general: {
+        flex: 1,
+        width: '100%',
     },
     headerContainer: {
         flexDirection: 'row',
         alignItems: "center",
         justifyContent: 'space-between',
-        width: '100%',
+        width: '90%',
         height: 50,
         marginBottom: 50,
         marginTop: 25,
+        marginLeft: 20
     },
     header: {
         padding: 8,
@@ -114,7 +119,7 @@ const styles = StyleSheet.create({
     textContainer: {
         flexDirection: 'column',
         justifyContent: 'center',
-        marginBottom: 30,
+        padding: 20
     },
 
     deviceRow: {
@@ -125,7 +130,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'none',
         padding: 10,
         borderRadius: 10,
-        marginBottom: 10,
+        marginBottom: 5,
     },
     checkbox: {
         width: 20,
@@ -149,7 +154,9 @@ const styles = StyleSheet.create({
         padding: 12,
         borderRadius: 25,
         alignItems: 'center',
-        width: '100%',
+        width: '90%',
+        marginHorizontal: '5%',
+        marginVertical: 23,
         marginBottom: 23,
     },
     saveButtonText: {
@@ -164,7 +171,8 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         paddingHorizontal: 10,
         marginBottom: 40,
-        marginTop: 230,
+        marginTop: 200,
+        marginHorizontal: '5%'
     },
     input: {
         flex: 1,
@@ -176,8 +184,8 @@ const styles = StyleSheet.create({
         fontWeight: 500,
     },
     iconsFooter: {
-        width: 30,
-        height: 30,
+        width: 40,
+        height: 40,
     },
     footer: {
         flexDirection: 'row',
@@ -185,5 +193,6 @@ const styles = StyleSheet.create({
         width: '100%',
         marginTop: 5,
         padding: 5,
+        height: 65
     },
 });

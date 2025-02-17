@@ -30,88 +30,95 @@ LocaleConfig.locales['fr'] = {
   LocaleConfig.defaultLocale = 'fr';
 
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: '#ffffffa',
-        // flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    }, 
-    headerContainer: {
-      flexDirection: 'row',
-      alignItems: "center",
-      justifyContent: 'space-between',
-      width: '100%',
-      height: 50,
-      marginBottom: 20,
-      marginTop: 25,
-    },
-    header: {
-      padding: 8,
-    },
-    backIcon: {
-      alignSelf: 'flex-end',
-      marginRight: 10,
-      padding: 8
-    },
-    welcome: {
-      fontSize: 16,
-      fontWeight: '500',
-      color: '#29463D',
-      marginTop: -8
-    },
-    logo: {
-        width: 200,
-        resizeMode: 'contain'
-    },
-    iconsFooter: {
-      width: 30,
-      height: 30,
-    },
-    footer: {
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-      width: '100%',
-      marginTop: 5,
-      padding: 5,
-    },
-    indicador: {
-      width: 150,
-      height: 150, 
-      borderRadius: '50%',
-      backgroundColor: '#6A8E4E',
-      justifyContent: 'center', 
-      alignItems: 'center',
-    },
-    tituloContainer: {
-      flexDirection: 'row',
-      margin: 5, 
-      alignItems: 'center',
-    }, 
-    titulo: {
-            fontSize: 20
-    }, 
-    notasContainer: {
-      textAlign: 'center',
-      width: '75%', 
-      margin: 10
-    },
-    calendarContainer: {
-      width: 280,
-      height: 260,
-      // backgroundColor: 'rgb(229, 223, 223)',
-      // boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 12px',
-      borderRadius:20,
-      marginHorizontal: "3%", 
-      marginTop: 15,
-      alignItems: 'center',
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'flex-start',
+    paddingTop: 28
+  },
+  general: {
+    flex: 1,
+    width: '100%'
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: "center",
+    justifyContent: 'space-between',
+    width: '90%',
+    height: 50,
+    marginBottom: 20,
+    marginTop: 25,
+    marginLeft: 20
+  },
+  header: {
+    padding: 8,
+  },
+  backIcon: {
+    alignSelf: 'flex-end',
+    marginRight: 10,
+    padding: 8
+  },
+  welcome: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#29463D',
+    marginTop: -8
+  },
+  logo: {
+    width: 200,
+    resizeMode: 'contain'
+  },
+  iconsFooter: {
+    width: 40,
+    height: 40,
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    marginTop: 5,
+    padding: 5,
+    height: 65
+  },
+  indicador: {
+    width: '100%',
+    height: 150,
     justifyContent: 'center',
-    }, 
-    calendar: {
+    alignItems: 'center',
+  },
+  tituloContainer: {
+    width: '100%',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    margin: 5,
+    alignItems: 'center',
+    marginVertical: 10
+  },
+  titulo: {
+    fontSize: 20,
+  },
+  notasContainer: {
+    textAlign: 'center',
+    width: '100%',
+    paddingHorizontal: '10%',
+    marginVertical: 20
+  },
+  calendarContainer: {
+    width: '100%',
+    height: 260,
+    // backgroundColor: 'rgb(229, 223, 223)',
+    // boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 12px',
+    borderRadius: 20,
+    marginTop: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  calendar: {
     //   flex: 1, 
-      width: '100%', 
+    width: '100%',
     //   height: 'auto',
-      transform: [{ scale: 0.8 }]
-    },
+    transform: [{ scale: 0.8 }]
+  },
 })
 
 
@@ -126,6 +133,7 @@ export default function ParametrosScreen(){
     const router = useRouter();
    return (
     <View style={styles.container}> 
+    <View style={styles.general}>
     <View style={styles.headerContainer}>
             <View style={styles.header}>
               <TouchableOpacity onPress={() => router.push('/(tabs)/panelscreen')}>
@@ -138,11 +146,11 @@ export default function ParametrosScreen(){
                 >Bienvenido</Text>
               </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={() => router.back()}>
+            <TouchableOpacity onPress={() => router.push('/(tabs)/panelscreen')}>
               <Ionicons name="arrow-back" size={30} color="#2D4B41" style={styles.backIcon} />
             </TouchableOpacity>
           </View>
-        <View > 
+        <View style={styles.indicador}> 
         <PieChart
 			        series = {Data}
               widthAndHeight={150}
@@ -155,6 +163,10 @@ export default function ParametrosScreen(){
         </View>
         <View style={styles.tituloContainer}> 
             <Text style={styles.titulo}>Invernadero1 </Text>
+            <Ionicons name="pencil" size={20} color="#29463D" />
+        </View>
+        <View style={styles.tituloContainer}> 
+            <Text style={styles.titulo}>Cultivo1 </Text>
             <Ionicons name="pencil" size={20} color="#29463D" />
         </View>
         <View style={styles.notasContainer}>
@@ -184,6 +196,7 @@ export default function ParametrosScreen(){
           </View>
         </View> 
       </TouchableOpacity>
+      </View>
         <View style={styles.footer}>
                 <TouchableOpacity onPress={() => router.push('/(tabs)/conectionscreen')}>
                   <Image source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
