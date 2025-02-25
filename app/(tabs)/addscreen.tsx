@@ -7,8 +7,10 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  KeyboardAvoidingView,
   Image,
   Button,
+  Keyboard,
 } from "react-native";
 
 import { useState, useEffect } from "react";
@@ -16,6 +18,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import axios from "axios";
 import { Picker } from "@react-native-picker/picker";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 interface Invernadero {
   _id: string;
@@ -103,10 +106,32 @@ export default function DeviceScreen() {
     }
   }
 
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setKeyboardVisible(true);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setKeyboardVisible(false);
+      }
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
   return (
     <View style={styles.container}>
+      <KeyboardAvoidingView>
       {/* <Button title="Volver a Home" onPress={() => router.back()} /> */}
-      <View style={styles.general}>
+      <KeyboardAwareScrollView style={styles.general} resetScrollToCoords={{ x: 0, y: 0 }}>
         <View style={styles.headerContainer}>
           <View style={styles.header}>
             <TouchableOpacity
@@ -254,32 +279,32 @@ export default function DeviceScreen() {
         >
           <Text style={styles.saveButtonText}>GUARDAR</Text>
         </TouchableOpacity>
-      </View>
-      <View style={styles.footer}>
-        <TouchableOpacity
-          onPress={() => router.push("/(tabs)/conectionscreen")}
-        >
-          <Image
-            source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")}
-            style={styles.iconsFooter}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Image
-            source={require("../../assets/images/icons/mas.png")}
-            style={styles.iconsFooter}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => router.push("/(tabs)/assistentscreen")}
-        >
-          <Image
-            source={require("../../assets/images/icons/asistencia.png")}
-            style={styles.iconsFooter}
-          />
-        </TouchableOpacity>
-      </View>
+      </KeyboardAwareScrollView>
+      </KeyboardAvoidingView>
+      {!keyboardVisible && (
+        <View style={styles.footer}>
+          <TouchableOpacity onPress={() => router.push("/(tabs)/conectionscreen")}>
+            <Image
+              source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")}
+              style={styles.iconsFooter}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Image
+              source={require("../../assets/images/icons/mas.png")}
+              style={styles.iconsFooter}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push("/(tabs)/assistentscreen")}>
+            <Image
+              source={require("../../assets/images/icons/asistencia.png")}
+              style={styles.iconsFooter}
+            />
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
+  
   );
 }
 
@@ -414,12 +439,15 @@ const styles = StyleSheet.create({
     height: 40,
   },
   footer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    width: "100%",
-    marginTop: 5,
-    padding: 5,
-    height: 65,
+
+      flexDirection: "row",
+      justifyContent: "space-around",
+      width: "100%",
+      position: "absolute",
+      bottom: 0,
+      height: 65,
+      padding: 5,
+      backgroundColor: "#FFFFFF"
   },
   pickerParametros: {
     backgroundColor: "#CCCCCC",
