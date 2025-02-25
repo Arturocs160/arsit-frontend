@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import Entypo from '@expo/vector-icons/Entypo';
+import Header from '@/components/Header';
 
 export default function DeviceScreen() {
     const [notes, setNotes] = useState('');
@@ -20,17 +21,7 @@ export default function DeviceScreen() {
             <View style={styles.general}>
 
                 <View style={styles.headerContainer}>
-                    <View style={styles.header}>
-                        <TouchableOpacity onPress={() => router.push('/(tabs)/panelscreen')}>
-                            <Image
-                                style={[{ width: 90, height: 50 }]}
-                                source={require("./../../assets/images/logoarsit.png")}
-                            />
-                            <Text
-                                style={styles.welcome}
-                            >Bienvenido</Text>
-                        </TouchableOpacity>
-                    </View>
+                    <Header></Header>
                     <TouchableOpacity onPress={() =>router.push('/(tabs)/panelscreen')}>
                         <Ionicons name="arrow-back" size={30} color="#2D4B41" style={styles.backIcon} />
                     </TouchableOpacity>

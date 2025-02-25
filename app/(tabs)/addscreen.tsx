@@ -19,6 +19,7 @@ import { useRouter } from "expo-router";
 import axios from "axios";
 import { Picker } from "@react-native-picker/picker";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import Header from "@/components/Header";
 
 interface Invernadero {
   _id: string;
@@ -47,7 +48,9 @@ export default function DeviceScreen() {
 
   const obtenerInvernaderos = async () => {
     try {
-      const response = await axios.get("http://192.168.1.37:3000/invernaderos");
+      const response = await axios.get(
+        "http://192.168.89.207:3000/invernaderos"
+      );
       setInvernaderos(response.data);
     } catch (error) {
       console.error("Error al obtener los invernaderos:", error);
@@ -94,7 +97,7 @@ export default function DeviceScreen() {
       };
 
       const result = await axios.post(
-        "http://192.168.1.37:3000/cultivos",
+        "http://192.168.89.207:3000/cultivos",
         data
       );
 
@@ -130,160 +133,159 @@ export default function DeviceScreen() {
   return (
     <View style={styles.container}>
       <KeyboardAvoidingView>
-      {/* <Button title="Volver a Home" onPress={() => router.back()} /> */}
-      <KeyboardAwareScrollView style={styles.general} resetScrollToCoords={{ x: 0, y: 0 }}>
-        <View style={styles.headerContainer}>
-          <View style={styles.header}>
+        {/* <Button title="Volver a Home" onPress={() => router.back()} /> */}
+        <KeyboardAwareScrollView
+          style={styles.general}
+          resetScrollToCoords={{ x: 0, y: 0 }}
+        >
+          <View style={styles.headerContainer}>
+            <Header></Header>
             <TouchableOpacity
               onPress={() => router.push("/(tabs)/panelscreen")}
             >
-              <Image
-                style={[{ width: 90, height: 50 }]}
-                source={require("./../../assets/images/logoarsit.png")}
+              <Ionicons
+                name="arrow-back"
+                size={30}
+                color="#2D4B41"
+                style={styles.backIcon}
               />
-              <Text style={styles.welcome}>Bienvenido</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={() => router.push("/(tabs)/panelscreen")}>
-            <Ionicons
-              name="arrow-back"
-              size={30}
-              color="#2D4B41"
-              style={styles.backIcon}
-            />
-          </TouchableOpacity>
-        </View>
 
-        <View style={styles.selectDispositivo}>
-          <Picker
-            placeholder="Dispositivo"
-            selectedValue={dispositivoSeleccionado}
-            style={styles.picker}
-            onValueChange={(itemValue) => setDispositivoSeleccionado(itemValue)}
-          >
-            <Picker.Item label="Dispositivo 1" value="1" />
-            <Picker.Item label="Dispositivo 2" value="2" />
-            <Picker.Item label="Dispositivo 3" value="3" />
-            <Picker.Item label="Dispositivo 4" value="4" />
-          </Picker>
-        </View>
-        <View style={styles.inputContainer}>
-          {/* <Text style={styles.label}>Nombre</Text> */}
-          <View>
+          <View style={styles.selectDispositivo}>
             <Picker
-              placeholder="Invernadero"
-              selectedValue={invernaderoSeleccionado}
+              placeholder="Dispositivo"
+              selectedValue={dispositivoSeleccionado}
               style={styles.picker}
               onValueChange={(itemValue) =>
-                setInvernaderoSeleccionado(itemValue)
+                setDispositivoSeleccionado(itemValue)
               }
             >
-              {invernaderos.map((invernadero, index) => (
-                <Picker.Item
-                  key={invernadero._id}
-                  label={invernadero.nombre}
-                  value={invernadero._id}
-                />
-              ))}
+              <Picker.Item label="Dispositivo 1" value="1" />
+              <Picker.Item label="Dispositivo 2" value="2" />
+              <Picker.Item label="Dispositivo 3" value="3" />
+              <Picker.Item label="Dispositivo 4" value="4" />
             </Picker>
           </View>
-        </View>
-        <View style={styles.inputContainer}>
-          {/* <Text style={styles.label}>Cultivo</Text> */}
-          <TextInput
-            style={styles.input}
-            placeholder="Cultivo"
-            placeholderTextColor="#29463D"
-            value={cultivo}
-            onChangeText={setCultivo}
-          />
-        </View>
-
-        <View style={styles.controlContainer}>
-          <Text style={styles.label}>Temperatura</Text>
-          <View style={styles.buttons}>
-            <Picker
-              selectedValue={temperaturaMin}
-              style={styles.pickerParametros}
-              onValueChange={(itemValue) => setTemperaturaMin(itemValue)}
-            >
-              {Array.from({ length: 101 }, (_, i) => (
-                <Picker.Item key={i} label={`${i}°`} value={i} />
-              ))}
-            </Picker>
-            <Text style={styles.buttonText}>{temperaturaMin}°</Text>
-            <Picker
-              selectedValue={temperaturaMax}
-              style={styles.pickerParametros}
-              onValueChange={(itemValue) => setTemperaturaMax(itemValue)}
-            >
-              {Array.from({ length: 101 }, (_, i) => (
-                <Picker.Item key={i} label={`${i}°`} value={i} />
-              ))}
-            </Picker>
-            <Text style={styles.buttonText}>{temperaturaMax}°</Text>
+          <View style={styles.inputContainer}>
+            {/* <Text style={styles.label}>Nombre</Text> */}
+            <View>
+              <Picker
+                placeholder="Invernadero"
+                selectedValue={invernaderoSeleccionado}
+                style={styles.picker}
+                onValueChange={(itemValue) =>
+                  setInvernaderoSeleccionado(itemValue)
+                }
+              >
+                {invernaderos.map((invernadero, index) => (
+                  <Picker.Item
+                    key={invernadero._id}
+                    label={invernadero.nombre}
+                    value={invernadero._id}
+                  />
+                ))}
+              </Picker>
+            </View>
           </View>
-        </View>
-
-        <View style={styles.controlContainer}>
-          <Text style={styles.label}>Humedad</Text>
-          <View style={styles.buttons}>
-            <Picker
-              selectedValue={humedadMin}
-              style={styles.pickerParametros}
-              onValueChange={(itemValue) => setHumedadMin(itemValue)}
-            >
-              {Array.from({ length: 101 }, (_, i) => (
-                <Picker.Item key={i} label={`${i}°`} value={i} />
-              ))}
-            </Picker>
-            <Text style={styles.buttonText}>{humedadMin}%</Text>
-            <Picker
-              selectedValue={humedadMax}
-              style={styles.pickerParametros}
-              onValueChange={(itemValue) => setHumedadMax(itemValue)}
-            >
-              {Array.from({ length: 101 }, (_, i) => (
-                <Picker.Item key={i} label={`${i}%`} value={i} />
-              ))}
-            </Picker>
-            <Text style={styles.buttonText}>{humedadMax}%</Text>
+          <View style={styles.inputContainer}>
+            {/* <Text style={styles.label}>Cultivo</Text> */}
+            <TextInput
+              style={styles.input}
+              placeholder="Cultivo"
+              placeholderTextColor="#29463D"
+              value={cultivo}
+              onChangeText={setCultivo}
+            />
           </View>
-        </View>
 
-        <View style={styles.notesContainer}>
-          <Text style={styles.notesLabel}>Notas:</Text>
-          <TextInput
-            style={styles.notesText}
-            multiline
-            placeholder=""
-            placeholderTextColor="#2D4B41"
-            value={notas}
-            onChangeText={setNotas}
-          />
-        </View>
+          <View style={styles.controlContainer}>
+            <Text style={styles.label}>Temperatura</Text>
+            <View style={styles.buttons}>
+              <Picker
+                selectedValue={temperaturaMin}
+                style={styles.pickerParametros}
+                onValueChange={(itemValue) => setTemperaturaMin(itemValue)}
+              >
+                {Array.from({ length: 101 }, (_, i) => (
+                  <Picker.Item key={i} label={`${i}°`} value={i} />
+                ))}
+              </Picker>
+              <Text style={styles.buttonText}>{temperaturaMin}°</Text>
+              <Picker
+                selectedValue={temperaturaMax}
+                style={styles.pickerParametros}
+                onValueChange={(itemValue) => setTemperaturaMax(itemValue)}
+              >
+                {Array.from({ length: 101 }, (_, i) => (
+                  <Picker.Item key={i} label={`${i}°`} value={i} />
+                ))}
+              </Picker>
+              <Text style={styles.buttonText}>{temperaturaMax}°</Text>
+            </View>
+          </View>
 
-        <TouchableOpacity
-          style={styles.saveButton}
-          onPress={() =>
-            guardarCultivo(
-              notas,
-              cultivo,
-              temperaturaMin,
-              temperaturaMax,
-              humedadMin,
-              humedadMax,
-              fechaActual
-            )
-          }
-        >
-          <Text style={styles.saveButtonText}>GUARDAR</Text>
-        </TouchableOpacity>
-      </KeyboardAwareScrollView>
+          <View style={styles.controlContainer}>
+            <Text style={styles.label}>Humedad</Text>
+            <View style={styles.buttons}>
+              <Picker
+                selectedValue={humedadMin}
+                style={styles.pickerParametros}
+                onValueChange={(itemValue) => setHumedadMin(itemValue)}
+              >
+                {Array.from({ length: 101 }, (_, i) => (
+                  <Picker.Item key={i} label={`${i}°`} value={i} />
+                ))}
+              </Picker>
+              <Text style={styles.buttonText}>{humedadMin}%</Text>
+              <Picker
+                selectedValue={humedadMax}
+                style={styles.pickerParametros}
+                onValueChange={(itemValue) => setHumedadMax(itemValue)}
+              >
+                {Array.from({ length: 101 }, (_, i) => (
+                  <Picker.Item key={i} label={`${i}%`} value={i} />
+                ))}
+              </Picker>
+              <Text style={styles.buttonText}>{humedadMax}%</Text>
+            </View>
+          </View>
+
+          <View style={styles.notesContainer}>
+            <Text style={styles.notesLabel}>Notas:</Text>
+            <TextInput
+              style={styles.notesText}
+              multiline
+              placeholder=""
+              placeholderTextColor="#2D4B41"
+              value={notas}
+              onChangeText={setNotas}
+            />
+          </View>
+
+          <TouchableOpacity
+            style={styles.saveButton}
+            onPress={() =>
+              guardarCultivo(
+                notas,
+                cultivo,
+                temperaturaMin,
+                temperaturaMax,
+                humedadMin,
+                humedadMax,
+                fechaActual
+              )
+            }
+          >
+            <Text style={styles.saveButtonText}>GUARDAR</Text>
+          </TouchableOpacity>
+        </KeyboardAwareScrollView>
       </KeyboardAvoidingView>
       {!keyboardVisible && (
         <View style={styles.footer}>
-          <TouchableOpacity onPress={() => router.push("/(tabs)/conectionscreen")}>
+          <TouchableOpacity
+            onPress={() => router.push("/(tabs)/conectionscreen")}
+          >
             <Image
               source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")}
               style={styles.iconsFooter}
@@ -295,7 +297,9 @@ export default function DeviceScreen() {
               style={styles.iconsFooter}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push("/(tabs)/assistentscreen")}>
+          <TouchableOpacity
+            onPress={() => router.push("/(tabs)/assistentscreen")}
+          >
             <Image
               source={require("../../assets/images/icons/asistencia.png")}
               style={styles.iconsFooter}
@@ -304,7 +308,6 @@ export default function DeviceScreen() {
         </View>
       )}
     </View>
-  
   );
 }
 
@@ -439,15 +442,14 @@ const styles = StyleSheet.create({
     height: 40,
   },
   footer: {
-
-      flexDirection: "row",
-      justifyContent: "space-around",
-      width: "100%",
-      position: "absolute",
-      bottom: 0,
-      height: 65,
-      padding: 5,
-      backgroundColor: "#FFFFFF"
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+    position: "absolute",
+    bottom: 0,
+    height: 65,
+    padding: 5,
+    backgroundColor: "#FFFFFF",
   },
   pickerParametros: {
     backgroundColor: "#CCCCCC",

@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
+import Header from '@/components/Header';
 
 interface Invernadero {
   _id: string;
@@ -34,7 +35,7 @@ export default function UpdateScreen() {
 
   const obtenerInvernaderos = async () => {
     try {
-      const response = await axios.get("http://192.168.1.37:3000/invernaderos");
+      const response = await axios.get("http://192.168.89.207:3000/invernaderos");
       setInvernaderos(response.data);
     } catch (error) {
       console.error("Error al obtener los invernaderos:", error);
@@ -48,7 +49,7 @@ export default function UpdateScreen() {
 
   const obtenerDetallesCultivo = async () => {
     try {
-      const response = await axios.get(`http://192.168.1.37:3000/cultivos/${cultivoId}`);
+      const response = await axios.get(`http://192.168.89.207:3000/cultivos/${cultivoId}`);
       const cultivoData = response.data;
 
       setCultivo(cultivoData.cultivo);
@@ -87,7 +88,7 @@ export default function UpdateScreen() {
       };
 
       try {
-        const result = await axios.put(`http://192.168.1.37:3000/cultivos/${cultivoId}`, data);
+        const result = await axios.put(`http://192.168.89.207:3000/cultivos/${cultivoId}`, data);
         if (result.status === 200) {
           alert("Datos guardados");
         } else {
@@ -105,17 +106,7 @@ export default function UpdateScreen() {
         {/* <Button title="Volver a Home" onPress={() => router.back()} /> */}
         <View style={styles.general}>
           <View style={styles.headerContainer}>
-            <View style={styles.header}>
-              <TouchableOpacity
-                onPress={() => router.push("/(tabs)/panelscreen")}
-              >
-                <Image
-                  style={[{ width: 90, height: 50 }]}
-                  source={require("./../../assets/images/logoarsit.png")}
-                />
-                <Text style={styles.welcome}>Bienvenido</Text>
-              </TouchableOpacity>
-            </View>
+            <Header></Header>
             <TouchableOpacity onPress={() => router.push("/(tabs)/panelscreen")}>
               <Ionicons
                 name="arrow-back"

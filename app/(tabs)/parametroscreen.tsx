@@ -13,6 +13,7 @@ import { Calendar, LocaleConfig } from "react-native-calendars";
 import { useState, useEffect } from "react";
 import PieChart from "react-native-pie-chart";
 import axios from "axios";
+import Header from "@/components/Header";
 
 interface Cultivo {
   _id: string;
@@ -88,7 +89,7 @@ export default function ParametrosScreen() {
 
   const obtenerInvernaderos = async () => {
     try {
-      const response = await axios.get("http://192.168.1.37:3000/invernaderos");
+      const response = await axios.get("http://192.168.89.207:3000/invernaderos");
       setInvernaderos(response.data);
       if (response.data.length > 0) {
         setInvernaderoSeleccionado(response.data[0]._id);
@@ -106,7 +107,7 @@ export default function ParametrosScreen() {
 
   const obtenerInformacion = async () => {
     try {
-      const response = await axios.get("http://192.168.1.37:3000/cultivos", {
+      const response = await axios.get("http://192.168.89.207:3000/cultivos", {
         params: {
           invernaderoId: invernaderoSeleccionado,
         },
@@ -120,7 +121,7 @@ export default function ParametrosScreen() {
 
   const eliminarCultivo = async (cultivoId: string) => {
     try {
-      await axios.delete(`http://192.168.1.37:3000/cultivos/${cultivoId}`);
+      await axios.delete(`http://192.168.89.207:3000/cultivos/${cultivoId}`);
       setCultivos(cultivos.filter((cultivo) => cultivo._id !== cultivoId));
     } catch (error) {
       console.error("Error al eliminar el cultivo:", error);
@@ -133,17 +134,7 @@ export default function ParametrosScreen() {
     <View style={styles.container}>
       <View style={styles.general}>
         <View style={styles.headerContainer}>
-          <View style={styles.header}>
-            <TouchableOpacity
-              onPress={() => router.push("/(tabs)/panelscreen")}
-            >
-              <Image
-                style={[{ width: 90, height: 50 }]}
-                source={require("./../../assets/images/logoarsit.png")}
-              />
-              <Text style={styles.welcome}>Bienvenido</Text>
-            </TouchableOpacity>
-          </View>
+          <Header></Header>
           <TouchableOpacity onPress={() => router.push("/(tabs)/panelscreen")}>
             <Ionicons
               name="arrow-back"

@@ -8,6 +8,7 @@ import { useRouter } from 'expo-router';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import Weather from '@/components/Parametros/Wheater';
 import PieChart from 'react-native-pie-chart';
+import Header from '@/components/Header';
 
 // const openWeatherKey = 'b691521ef68e4659a585e52a9175b416'
 // let url = `http://api.openweathermap.org/data/2.5/onecall?&units=metric&exclude=minutely&appid=${openWeatherKey}`;
@@ -48,15 +49,7 @@ export default function PanelScreen({ }) {
     <View style={styles.container}>
       <View style={styles.general}>
         <View style={styles.headerContainer}>
-          <View style={styles.header}>
-            <TouchableOpacity onPress={() => router.back()}>
-              <Image
-                style={[{ width: 90, height: 50 }]}
-                source={require("./../../assets/images/logoarsit.png")}
-              />
-              <Text style={styles.welcome}>Bienvenido</Text>
-            </TouchableOpacity>
-          </View>
+          <Header></Header>
           {/* <TouchableOpacity onPress={() => router.back()}>
                          <Ionicons name="arrow-back" size={30} color="#2D4B41" style={styles.backIcon} />
                          </TouchableOpacity> */}
