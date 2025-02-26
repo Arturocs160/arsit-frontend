@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image, Button } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image, Button, Keyboard, KeyboardAvoidingView } from 'react-native';
 
 import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import Header from '@/components/Header';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 
 export default function DeviceScreen() {
@@ -14,9 +15,32 @@ export default function DeviceScreen() {
 
   const router = useRouter();
 
+   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  
+    useEffect(() => {
+      const keyboardDidShowListener = Keyboard.addListener(
+        "keyboardDidShow",
+        () => {
+          setKeyboardVisible(true);
+        }
+      );
+      const keyboardDidHideListener = Keyboard.addListener(
+        "keyboardDidHide",
+        () => {
+          setKeyboardVisible(false);
+        }
+      );
+  
+      return () => {
+        keyboardDidShowListener.remove();
+        keyboardDidHideListener.remove();
+      };
+    }, []);
+
   return (
 
     <View style={styles.container}>
+      <KeyboardAvoidingView style={styles.containergeneral}>
       <View style={styles.general}>
         <View style={styles.headerContainer}>
           <Header></Header>
@@ -29,6 +53,7 @@ export default function DeviceScreen() {
             Soporte
           </Text>
         </View>
+        <KeyboardAwareScrollView>
         <View style={styles.notesContainer}>
           <View style={styles.notesContainerLeft}>
             <Text style={styles.notesLabel}>Notas:
@@ -71,19 +96,36 @@ export default function DeviceScreen() {
             <Ionicons name="arrow-back" size={24} color="#29463D" />
           </TouchableOpacity>
         </View>
+        </KeyboardAwareScrollView>
       </View>
-      <View style={styles.footer}>
-        <TouchableOpacity onPress={() => router.push('/(tabs)/conectionscreen')}>
-          <Image source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => router.push('/(tabs)/addscreen')}>
-          <Image source={require("../../assets/images/icons/mas.png")} style={styles.iconsFooter} />
-        </TouchableOpacity>
-        <TouchableOpacity >
-          <Image source={require("../../assets/images/icons/asistencia.png")} style={styles.iconsFooter} />
-        </TouchableOpacity>
-      </View>
-    </View>
+      </KeyboardAvoidingView>
+      {!keyboardVisible && (
+              <View style={styles.footer}>
+                <TouchableOpacity
+                  onPress={() => router.push("/(tabs)/conectionscreen")}
+                >
+                  <Image
+                    source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")}
+                    style={styles.iconsFooter}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                  <Image
+                    source={require("../../assets/images/icons/mas.png")}
+                    style={styles.iconsFooter}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => router.push("/(tabs)/assistentscreen")}
+                >
+                  <Image
+                    source={require("../../assets/images/icons/asistencia.png")}
+                    style={styles.iconsFooter}
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
   );
 }
 
@@ -93,6 +135,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     alignItems: 'flex-start',
     paddingTop: 28,
+  },
+  containergeneral:{
+    width: '100%',
+    flex: 1,
   },
   general: {
     flex: 1,
@@ -186,12 +232,14 @@ const styles = StyleSheet.create({
     fontWeight: 500,
   },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-    marginTop: 5,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+    position: "absolute",
+    bottom: 0,
+    height: 65,
     padding: 5,
-    height: 65
+    backgroundColor: "#FFFFFF",
   },
   iconsFooter: {
     width: 40,

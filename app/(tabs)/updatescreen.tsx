@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, KeyboardAvoidingView, KeyboardAvoidingViewBase, Keyboard } from 'react-native';
 import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Picker } from '@react-native-picker/picker';
 import Header from '@/components/Header';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 interface Invernadero {
   _id: string;
@@ -101,8 +102,31 @@ export default function UpdateScreen() {
     }
   }
 
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setKeyboardVisible(true);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setKeyboardVisible(false);
+      }
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
   return (
       <View style={styles.container}>
+        <KeyboardAvoidingView>
         {/* <Button title="Volver a Home" onPress={() => router.back()} /> */}
         <View style={styles.general}>
           <View style={styles.headerContainer}>
@@ -116,7 +140,7 @@ export default function UpdateScreen() {
               />
             </TouchableOpacity>
           </View>
-  
+ <KeyboardAwareScrollView> 
           <View style={styles.selectDispositivo}>
             <Picker
               placeholder="Dispositivo"
@@ -242,7 +266,10 @@ export default function UpdateScreen() {
           >
             <Text style={styles.saveButtonText}>GUARDAR</Text>
           </TouchableOpacity>
+          </KeyboardAwareScrollView>
         </View>
+        </KeyboardAvoidingView>
+        {!keyboardVisible && (
         <View style={styles.footer}>
           <TouchableOpacity
             onPress={() => router.push("/(tabs)/conectionscreen")}
@@ -267,8 +294,9 @@ export default function UpdateScreen() {
             />
           </TouchableOpacity>
         </View>
-      </View>
-    );
+      )}
+    </View>
+  );
   }
   
   const styles = StyleSheet.create({
@@ -403,11 +431,13 @@ export default function UpdateScreen() {
     },
     footer: {
       flexDirection: "row",
-      justifyContent: "space-around",
-      width: "100%",
-      marginTop: 5,
-      padding: 5,
-      height: 65,
+    justifyContent: "space-around",
+    width: "100%",
+    position: "absolute",
+    bottom: 0,
+    height: 65,
+    padding: 5,
+    backgroundColor: "#FFFFFF",
     },
     pickerParametros: {
       backgroundColor: "#CCCCCC",

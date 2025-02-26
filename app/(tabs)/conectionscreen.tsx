@@ -1,10 +1,11 @@
-import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image, Button } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image, Button, Keyboard, KeyboardAvoidingView } from 'react-native';
 import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import Entypo from '@expo/vector-icons/Entypo';
 import Header from '@/components/Header';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export default function DeviceScreen() {
     const [notes, setNotes] = useState('');
@@ -16,62 +17,102 @@ export default function DeviceScreen() {
         { id: 4, name: 'Dispositivo 4', selected: false },
     ]);
 
+    const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+            "keyboardDidShow",
+            () => {
+                setKeyboardVisible(true);
+            }
+        );
+        const keyboardDidHideListener = Keyboard.addListener(
+            "keyboardDidHide",
+            () => {
+                setKeyboardVisible(false);
+            }
+        );
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        };
+    }, []);
     return (
         <View style={styles.container}>
-            <View style={styles.general}>
+            <KeyboardAvoidingView>
+                <View style={styles.general}>
 
-                <View style={styles.headerContainer}>
-                    <Header></Header>
-                    <TouchableOpacity onPress={() =>router.push('/(tabs)/panelscreen')}>
-                        <Ionicons name="arrow-back" size={30} color="#2D4B41" style={styles.backIcon} />
-                    </TouchableOpacity>
+                    <View style={styles.headerContainer}>
+                        <Header></Header>
+                        <TouchableOpacity onPress={() => router.push('/(tabs)/panelscreen')}>
+                            <Ionicons name="arrow-back" size={30} color="#2D4B41" style={styles.backIcon} />
+                        </TouchableOpacity>
 
-                </View>
-                <View style={styles.textContainer}>
+                    </View>
+                    <KeyboardAwareScrollView>
+                        <View style={styles.textContainer}>
 
-                    {devices.map((device) => (
-                        <View key={device.id} style={styles.deviceRow}>
-                            <TouchableOpacity
-                                style={[styles.checkbox, device.selected && styles.checkboxSelected]}
-                                onPress={() =>
-                                    setDevices(devices.map(d => d.id === device.id ? { ...d, selected: !d.selected } : d))
-                                }
-                            />
-                            <Text style={styles.deviceName}>{device.name}</Text>
-                            <TouchableOpacity /*onPress={}*/>
-                            <View style={styles.iconos}>
-                                <Ionicons name="pencil" size={20} color="#29463D" />
-                                <Entypo name="trash" size={24} color="black" /> 
-                            </View>
-                                                           </TouchableOpacity>
+                            {devices.map((device) => (
+                                <View key={device.id} style={styles.deviceRow}>
+                                    <TouchableOpacity
+                                        style={[styles.checkbox, device.selected && styles.checkboxSelected]}
+                                        onPress={() =>
+                                            setDevices(devices.map(d => d.id === device.id ? { ...d, selected: !d.selected } : d))
+                                        }
+                                    />
+                                    <Text style={styles.deviceName}>{device.name}</Text>
+                                    <TouchableOpacity /*onPress={}*/>
+                                        <View style={styles.iconos}>
+                                            <Ionicons name="pencil" size={20} color="#29463D" />
+                                            <Entypo name="trash" size={24} color="black" />
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+                            ))}
+
                         </View>
-                    ))}
 
+                        <View style={styles.inputContainer}>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Nombre"
+                                placeholderTextColor="#29463D"
+                            />
+                        </View>
+
+                        <TouchableOpacity style={styles.saveButton}>
+                            <Text style={styles.saveButtonText}>GUARDAR</Text>
+                        </TouchableOpacity>
+                    </KeyboardAwareScrollView>
                 </View>
-
-                <View style={styles.inputContainer}>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Nombre"
-                        placeholderTextColor="#29463D"
-                    />
+            </KeyboardAvoidingView>
+            {!keyboardVisible && (
+                <View style={styles.footer}>
+                    <TouchableOpacity
+                        onPress={() => router.push("/(tabs)/conectionscreen")}
+                    >
+                        <Image
+                            source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")}
+                            style={styles.iconsFooter}
+                        />
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                        <Image
+                            source={require("../../assets/images/icons/mas.png")}
+                            style={styles.iconsFooter}
+                        />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => router.push("/(tabs)/assistentscreen")}
+                    >
+                        <Image
+                            source={require("../../assets/images/icons/asistencia.png")}
+                            style={styles.iconsFooter}
+                        />
+                    </TouchableOpacity>
                 </View>
-
-                <TouchableOpacity style={styles.saveButton}>
-                    <Text style={styles.saveButtonText}>GUARDAR</Text>
-                </TouchableOpacity>
-            </View>
-            <View style={styles.footer}>
-                <TouchableOpacity>
-                    <Image source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => router.push('/(tabs)/addscreen')}>
-                    <Image source={require("../../assets/images/icons/mas.png")} style={styles.iconsFooter} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => router.push('/(tabs)/assistentscreen')}>
-                    <Image source={require("../../assets/images/icons/asistencia.png")} style={styles.iconsFooter} />
-                </TouchableOpacity>
-            </View>
+            )}
         </View>
     );
 }
@@ -88,7 +129,7 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     iconos: {
-    flexDirection: 'row'
+        flexDirection: 'row'
     },
     headerContainer: {
         flexDirection: 'row',
@@ -186,11 +227,13 @@ const styles = StyleSheet.create({
         height: 40,
     },
     footer: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        width: '100%',
-        marginTop: 5,
+        flexDirection: "row",
+        justifyContent: "space-around",
+        width: "100%",
+        position: "absolute",
+        bottom: 0,
+        height: 65,
         padding: 5,
-        height: 65
+        backgroundColor: "#FFFFFF",
     },
 });

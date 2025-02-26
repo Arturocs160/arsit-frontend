@@ -134,10 +134,8 @@ export default function DeviceScreen() {
     <View style={styles.container}>
       <KeyboardAvoidingView>
         {/* <Button title="Volver a Home" onPress={() => router.back()} /> */}
-        <KeyboardAwareScrollView
-          style={styles.general}
-          resetScrollToCoords={{ x: 0, y: 0 }}
-        >
+        <View
+          style={styles.general}>
           <View style={styles.headerContainer}>
             <Header></Header>
             <TouchableOpacity
@@ -151,7 +149,7 @@ export default function DeviceScreen() {
               />
             </TouchableOpacity>
           </View>
-
+        <KeyboardAwareScrollView>
           <View style={styles.selectDispositivo}>
             <Picker
               placeholder="Dispositivo"
@@ -280,6 +278,7 @@ export default function DeviceScreen() {
             <Text style={styles.saveButtonText}>GUARDAR</Text>
           </TouchableOpacity>
         </KeyboardAwareScrollView>
+        </View>
       </KeyboardAvoidingView>
       {!keyboardVisible && (
         <View style={styles.footer}>
