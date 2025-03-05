@@ -47,7 +47,7 @@ export default function DeviceScreen() {
   const obtenerInvernaderos = async () => {
     try {
       const response = await axios.get(
-        "http://192.168.89.207:3000/invernaderos"
+        `${process.env.EXPO_PUBLIC_BASE_URL}/invernaderos`
       );
       setInvernaderos(response.data);
     } catch (error) {
@@ -95,7 +95,7 @@ export default function DeviceScreen() {
       };
 
       const result = await axios.post(
-        "http://192.168.89.207:3000/cultivos",
+        `${process.env.EXPO_PUBLIC_BASE_URL}/cultivos`,
         data
       );
 

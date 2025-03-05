@@ -36,7 +36,7 @@ export default function UpdateScreen() {
 
   const obtenerInvernaderos = async () => {
     try {
-      const response = await axios.get("http://192.168.89.207:3000/invernaderos");
+      const response = await axios.get(`${process.env.EXPO_PUBLIC_BASE_URL}/invernaderos`);
       setInvernaderos(response.data);
     } catch (error) {
       console.error("Error al obtener los invernaderos:", error);
@@ -50,7 +50,7 @@ export default function UpdateScreen() {
 
   const obtenerDetallesCultivo = async () => {
     try {
-      const response = await axios.get(`http://192.168.89.207:3000/cultivos/${cultivoId}`);
+      const response = await axios.get(`${process.env.EXPO_PUBLIC_BASE_URL}/cultivos/${cultivoId}`);
       const cultivoData = response.data;
 
       setCultivo(cultivoData.cultivo);
@@ -89,7 +89,7 @@ export default function UpdateScreen() {
       };
 
       try {
-        const result = await axios.put(`http://192.168.89.207:3000/cultivos/${cultivoId}`, data);
+        const result = await axios.put(`${process.env.EXPO_PUBLIC_BASE_URL}/${cultivoId}`, data);
         if (result.status === 200) {
           alert("Datos guardados");
         } else {

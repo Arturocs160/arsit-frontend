@@ -89,7 +89,7 @@ export default function ParametrosScreen() {
 
   const obtenerInvernaderos = async () => {
     try {
-      const response = await axios.get("http://192.168.89.207:3000/invernaderos");
+      const response = await axios.get(`${process.env.EXPO_PUBLIC_BASE_URL}/invernaderos`);
       setInvernaderos(response.data);
       if (response.data.length > 0) {
         setInvernaderoSeleccionado(response.data[0]._id);
@@ -107,7 +107,7 @@ export default function ParametrosScreen() {
 
   const obtenerInformacion = async () => {
     try {
-      const response = await axios.get("http://192.168.89.207:3000/cultivos", {
+      const response = await axios.get(`${process.env.EXPO_PUBLIC_BASE_URL}/cultivos`, {
         params: {
           invernaderoId: invernaderoSeleccionado,
         },
@@ -121,7 +121,7 @@ export default function ParametrosScreen() {
 
   const eliminarCultivo = async (cultivoId: string) => {
     try {
-      await axios.delete(`http://192.168.89.207:3000/cultivos/${cultivoId}`);
+      await axios.delete(`${process.env.EXPO_PUBLIC_BASE_URL}/cultivos/${cultivoId}`);
       setCultivos(cultivos.filter((cultivo) => cultivo._id !== cultivoId));
     } catch (error) {
       console.error("Error al eliminar el cultivo:", error);
@@ -239,7 +239,7 @@ export default function ParametrosScreen() {
             style={styles.iconsFooter}
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => router.push("/(tabs)/addscreen")}>
+        <TouchableOpacity onPress={() => router.push("/(tabs)/menuscreen")}>
           <Image
             source={require("../../assets/images/icons/mas.png")}
             style={styles.iconsFooter}
