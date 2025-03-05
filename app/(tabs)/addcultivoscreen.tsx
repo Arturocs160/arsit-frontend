@@ -32,6 +32,7 @@ export default function DeviceScreen() {
   const [notas, setNotas] = useState<string>("");
   const [cultivo, setCultivo] = useState<string>("");
   const [invernaderos, setInvernaderos] = useState<Invernadero[]>([]);
+  const [invernaderoSeleccionadoId, setInvernaderoSeleccionadoId] = useState(null);
   const [fechaActual, setFechaActual] = useState<Date>(fecha);
   const [temperaturaMin, setTemperaturaMin] = useState<number>(30);
   const [temperaturaMax, setTemperaturaMax] = useState<number>(40);
@@ -87,7 +88,7 @@ export default function DeviceScreen() {
       const data = {
         cultivoId: undefined,
         cultivo: cultivo,
-        invernaderoId: invernaderos[0]._id,
+        invernaderoId: invernaderoSeleccionadoId,
         fecha_siembra: fechaFormateada,
         nota: notas,
         temperaturaMin: temperaturaMin,
@@ -106,6 +107,9 @@ export default function DeviceScreen() {
       } else {
         alert("Ocurrio un error, favor de intentar más tarde");
       }
+      setInvernaderoSeleccionadoId(null);
+      setCultivo("");
+      setNotas("");
     }
   }
 
@@ -170,10 +174,10 @@ export default function DeviceScreen() {
             <View>
               <Picker
                 placeholder="Invernadero"
-                selectedValue={invernaderoSeleccionado}
+                selectedValue={invernaderoSeleccionadoId}
                 style={styles.picker}
                 onValueChange={(itemValue) =>
-                  setInvernaderoSeleccionado(itemValue)
+                  setInvernaderoSeleccionadoId(itemValue)
                 }
               >
                 {invernaderos.map((invernadero, index) => (
@@ -183,6 +187,7 @@ export default function DeviceScreen() {
                     value={invernadero._id}
                   />
                 ))}
+                
               </Picker>
             </View>
           </View>

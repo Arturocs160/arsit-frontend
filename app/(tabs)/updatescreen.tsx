@@ -78,7 +78,7 @@ export default function UpdateScreen() {
       const data = {
         cultivoId: cultivoId,
         cultivo: cultivo,
-        invernaderoId: '67af827387d2bcf09ecb0ce3',
+        invernaderoId: invernaderoSeleccionado,
         fecha_siembra: fechaFormateada,
         notasId: undefined,
         nota: notas,
@@ -89,7 +89,7 @@ export default function UpdateScreen() {
       };
 
       try {
-        const result = await axios.put(`${process.env.EXPO_PUBLIC_BASE_URL}/${cultivoId}`, data);
+        const result = await axios.put(`${process.env.EXPO_PUBLIC_BASE_URL}/cultivos/${cultivoId}`, data);
         if (result.status === 200) {
           alert("Datos guardados");
         } else {

@@ -14,6 +14,7 @@ import { useState, useEffect } from "react";
 import PieChart from "react-native-pie-chart";
 import axios from "axios";
 import Header from "@/components/Header";
+import { Picker } from "@react-native-picker/picker";
 
 interface Cultivo {
   _id: string;
@@ -26,6 +27,12 @@ interface Cultivo {
   temperaturaMax: number;
   humedadMin: number;
   humedadMax: number;
+}
+
+interface Invernadero {
+  _id: string;
+  nombre: string;
+  ubicacion: string;
 }
 
 LocaleConfig.locales["fr"] = {
@@ -79,7 +86,7 @@ const Data = [
 ];
 export default function ParametrosScreen() {
   const [selected, setSelected] = useState("");
-  const [invernaderos, setInvernaderos] = useState([]);
+  const [invernaderos, setInvernaderos] = useState<Invernadero[]>([]);
   const [invernaderoSeleccionado, setInvernaderoSeleccionado] = useState("");
   const [cultivos, setCultivos] = useState<Cultivo[]>([]);
 
@@ -89,7 +96,9 @@ export default function ParametrosScreen() {
 
   const obtenerInvernaderos = async () => {
     try {
-      const response = await axios.get(`${process.env.EXPO_PUBLIC_BASE_URL}/invernaderos`);
+      const response = await axios.get(
+        `${process.env.EXPO_PUBLIC_BASE_URL}/invernaderos`
+      );
       setInvernaderos(response.data);
       if (response.data.length > 0) {
         setInvernaderoSeleccionado(response.data[0]._id);
@@ -107,11 +116,14 @@ export default function ParametrosScreen() {
 
   const obtenerInformacion = async () => {
     try {
-      const response = await axios.get(`${process.env.EXPO_PUBLIC_BASE_URL}/cultivos`, {
-        params: {
-          invernaderoId: invernaderoSeleccionado,
-        },
-      });
+      const response = await axios.get(
+        `${process.env.EXPO_PUBLIC_BASE_URL}/cultivos`,
+        {
+          params: {
+            invernaderoId: invernaderoSeleccionado,
+          },
+        }
+      );
       setCultivos(response.data);
       // console.log(response.data)
     } catch (error) {
@@ -121,15 +133,28 @@ export default function ParametrosScreen() {
 
   const eliminarCultivo = async (cultivoId: string) => {
     try {
-      await axios.delete(`${process.env.EXPO_PUBLIC_BASE_URL}/cultivos/${cultivoId}`);
+      await axios.delete(
+        `${process.env.EXPO_PUBLIC_BASE_URL}/cultivos/${cultivoId}`
+      );
       setCultivos(cultivos.filter((cultivo) => cultivo._id !== cultivoId));
     } catch (error) {
       console.error("Error al eliminar el cultivo:", error);
     }
-    alert("Cultivo eliminado")
+    alert("Cultivo eliminado");
+  };
+
+  const eliminarInvernadero = async (invernaderoId: string) => {
+    try {
+      await axios.delete(`${process.env.EXPO_PUBLIC_BASE_URL}/invernaderos/${invernaderoId}`);
+      setInvernaderos(invernaderos.filter((invernadero) => invernadero._id !== invernaderoId));
+    } catch (error) {
+      console.error("Error al eliminar el cultivo:", error);
+    }
+    alert("Cultivo eliminado");
   };
 
   const router = useRouter();
+
   return (
     <View style={styles.container}>
       <View style={styles.general}>
@@ -155,11 +180,32 @@ export default function ParametrosScreen() {
             // backgroundColor = {}
           />
         </View>
-        <View style={styles.tituloContainer}>
-          <Text style={styles.titulo}> Invernadero1 </Text>
-          <TouchableOpacity onPress={() => router.push("/updatescreen")}>
-            <Ionicons name="pencil" size={20} color="#29463D" />
-          </TouchableOpacity>
+        <View style={{ width: "50%", alignSelf: "center", marginTop: 10 }}>
+          <Picker
+            selectedValue={invernaderoSeleccionado}
+            style={styles.picker}
+            onValueChange={(itemValue) => {
+              setInvernaderoSeleccionado(itemValue);
+            }}
+          >
+            <Picker.Item label="Selecciona un invernadero" value="" />
+            {invernaderos.map((invernadero) => (
+              <Picker.Item key={invernadero._id} label={invernadero.nombre} value={invernadero._id} />
+            ))}
+          </Picker>
+
+          {/* Obtener el invernadero seleccionado */}
+          {invernaderoSeleccionado && (
+            <View style={{ flexDirection: "row", justifyContent: "center", marginTop: 10 }}>
+              <TouchableOpacity onPress={() => router.push(`/updateinvernaderoscreen?invernaderoId=${invernaderoSeleccionado}`)}>
+                <Ionicons style={{ marginHorizontal: 8 }} name="pencil" size={20} color="#29463D" />
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={() => eliminarInvernadero(invernaderoSeleccionado)}>
+                <Ionicons style={{ marginHorizontal: 8 }} name="trash" size={20} color="#29463D" />
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
         <View style={styles.tituloContainer}>
           {cultivos.map((cultivo, index) => (
@@ -347,5 +393,11 @@ const styles = StyleSheet.create({
     width: "100%",
     //   height: 'auto',
     transform: [{ scale: 0.8 }],
+  },
+  picker: {
+    height: 50,
+    width: "100%",
+    backgroundColor: "#CCCCCC",
+    marginBottom: 20,
   },
 });

@@ -21,48 +21,19 @@ import { Picker } from "@react-native-picker/picker";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Header from "@/components/Header";
 
-interface Invernadero {
-  _id: string;
-  nombre: string;
-}
-
 export default function DeviceScreen() {
   const fecha = new Date();
 
-  const [invernadero, setInvernadero] = useState<string>("");
   const [cultivo, setCultivo] = useState<string>("");
   const [nombre, setNombre] = useState<string>("");
   const [ubicacion, setUbicacion] = useState<string>("");
-  const [invernaderos, setInvernaderos] = useState<Invernadero[]>([]);
   const [fechaActual, setFechaActual] = useState<Date>(fecha);
-  const [dispositivoSeleccionado, setDispositivoSeleccionado] = useState("1");
-  const [invernaderoSeleccionado, setInvernaderoSeleccionado] = useState("1");
 
   const router = useRouter();
 
-  useEffect(() => {
-    obtenerInvernaderos();
-  }, []);
-
-  const obtenerInvernaderos = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.EXPO_PUBLIC_BASE_URL}/invernaderos`
-      );
-      setInvernaderos(response.data);
-    } catch (error) {
-      console.error("Error al obtener los invernaderos:", error);
-    }
-  };
-
-  async function guardarCultivo(
-    notas: string,
-    cultivo: string,
-    temperaturaMin: number,
-    temperaturaMax: number,
-    humedadMin: number,
-    humedadMax: number,
-    fechaActual: Date
+  async function guardarInvernadero(
+    invernadero: string,
+    ubicacion: string
   ) {
     const fechaFormateada = fechaActual.toLocaleDateString("es-ES", {
       day: "2-digit",
@@ -70,32 +41,19 @@ export default function DeviceScreen() {
       year: "numeric",
     });
 
-    if (
-      !cultivo ||
-      !temperaturaMin ||
-      !temperaturaMax ||
-      !humedadMin ||
-      !humedadMax ||
-      !fechaActual
-    ) {
+    if (!invernadero || !ubicacion) {
       alert(
         "Para guardar se necesita llenar todos los campos en los que se requiere información"
       );
     } else {
       const data = {
-        cultivoId: undefined,
-        cultivo: cultivo,
-        invernaderoId: invernaderos[0]._id,
-        fecha_siembra: fechaFormateada,
-        nota: notas,
-        temperaturaMin: temperaturaMin,
-        temperaturaMax: temperaturaMax,
-        humedadMax: humedadMax,
-        humedadMin: humedadMin,
+        nombre: nombre,
+        ubicacion: ubicacion,
+        fecha_agregado: fechaFormateada
       };
 
       const result = await axios.post(
-        `${process.env.EXPO_PUBLIC_BASE_URL}/cultivos`,
+        `${process.env.EXPO_PUBLIC_BASE_URL}/invernaderos`,
         data
       );
 
@@ -132,8 +90,7 @@ export default function DeviceScreen() {
     <View style={styles.container}>
       <KeyboardAvoidingView>
         {/* <Button title="Volver a Home" onPress={() => router.back()} /> */}
-        <View
-          style={styles.general}>
+        <View style={styles.general}>
           <View style={styles.headerContainer}>
             <Header></Header>
             <TouchableOpacity
@@ -147,74 +104,71 @@ export default function DeviceScreen() {
               />
             </TouchableOpacity>
           </View>
-        <KeyboardAwareScrollView>
+          <KeyboardAwareScrollView>
+            {/* <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Invernadero"
+                placeholderTextColor="#29463D"
+                value={invernadero}
+                onChangeText={setInvernadero}
+              />
+            </View> */}
+            <View style={styles.inputContainer}>
+              {/* <Text style={styles.label}>Cultivo</Text> */}
+              <TextInput
+                style={styles.input}
+                placeholder="Invernadero"
+                placeholderTextColor="#29463D"
+                value={nombre}
+                onChangeText={setNombre}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              {/* <Text style={styles.label}>Cultivo</Text> */}
+              <TextInput
+                style={styles.input}
+                placeholder="Ubicación"
+                placeholderTextColor="#29463D"
+                value={ubicacion}
+                onChangeText={setUbicacion}
+              />
+            </View>
+            {/* <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="Cultivo"
+                placeholderTextColor="#29463D"
+                value={cultivo}
+                onChangeText={setCultivo}
+              />
+            </View> */}
+            {/* <View style={styles.selectDispositivo}>
+              <Picker
+                placeholder="Dispositivo"
+                selectedValue={dispositivoSeleccionado}
+                style={styles.picker}
+                onValueChange={(itemValue) =>
+                  setDispositivoSeleccionado(itemValue)
+                }
+              >
+                <Picker.Item label="Dispositivo 1" value="1" />
+                <Picker.Item label="Dispositivo 2" value="2" />
+                <Picker.Item label="Dispositivo 3" value="3" />
+                <Picker.Item label="Dispositivo 4" value="4" />
+              </Picker>
+            </View> */}
 
-          
-          <View style={styles.inputContainer}>
-            {/* <Text style={styles.label}>Cultivo</Text> */}
-            <TextInput
-              style={styles.input}
-              placeholder="Invernadero"
-              placeholderTextColor="#29463D"
-              value={invernadero}
-              onChangeText={setInvernadero}
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            {/* <Text style={styles.label}>Cultivo</Text> */}
-            <TextInput
-              style={styles.input}
-              placeholder="Nombre"
-              placeholderTextColor="#29463D"
-              value={nombre}
-              onChangeText={setNombre}
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            {/* <Text style={styles.label}>Cultivo</Text> */}
-            <TextInput
-              style={styles.input}
-              placeholder="Ubicación"
-              placeholderTextColor="#29463D"
-              value={ubicacion}
-              onChangeText={setUbicacion}
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            {/* <Text style={styles.label}>Cultivo</Text> */}
-            <TextInput
-              style={styles.input}
-              placeholder="Cultivo"
-              placeholderTextColor="#29463D"
-              value={cultivo}
-              onChangeText={setCultivo}
-            />
-          </View>
-          <View style={styles.selectDispositivo}>
-                      <Picker
-                        placeholder="Dispositivo"
-                        selectedValue={dispositivoSeleccionado}
-                        style={styles.picker}
-                        onValueChange={(itemValue) =>
-                          setDispositivoSeleccionado(itemValue)
-                        }
-                      >
-                        <Picker.Item label="Dispositivo 1" value="1" />
-                        <Picker.Item label="Dispositivo 2" value="2" />
-                        <Picker.Item label="Dispositivo 3" value="3" />
-                        <Picker.Item label="Dispositivo 4" value="4" />
-                      </Picker>
-                    </View>
-
-         
-
-          <TouchableOpacity
-            style={styles.saveButton}
-          
-          >
-            <Text style={styles.saveButtonText}>GUARDAR</Text>
-          </TouchableOpacity>
-        </KeyboardAwareScrollView>
+            <TouchableOpacity style={styles.saveButton}
+            onPress={() =>
+              guardarInvernadero(
+                nombre,
+                ubicacion
+              )
+            }>
+              <Text style={styles.saveButtonText}>GUARDAR</Text>
+            </TouchableOpacity>
+          </KeyboardAwareScrollView>
         </View>
       </KeyboardAvoidingView>
       {!keyboardVisible && (
