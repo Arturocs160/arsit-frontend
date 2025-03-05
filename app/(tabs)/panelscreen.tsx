@@ -132,7 +132,7 @@ export default function PanelScreen({ }) {
         <TouchableOpacity onPress={() => router.push('/(tabs)/conectionscreen')}>
           <Image source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => router.push('/(tabs)/addscreen')}>
+        <TouchableOpacity onPress={() => router.push('/(tabs)/menuscreen')}>
           <Image source={require("../../assets/images/icons/mas.png")} style={styles.iconsFooter} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => router.push('/(tabs)/assistentscreen')}>
