@@ -33,56 +33,67 @@ export default function UpdateScreen() {
             />
           </TouchableOpacity>
         </View>
-        <View>
-          <View>
+        <View style={{ marginTop: 70 }}>
+          {/* <View>
             <Text style={styles.titulo}>Agregar</Text>
+          </View> */}
+          <View >
+            <TouchableOpacity style={styles.contenedor}
+              onPress={() => router.push("/(tabs)/invernaderoscreen")}
+            >
+              <Text style={styles.texto}>INVERNADEROS</Text>
+            </TouchableOpacity>
           </View>
-          <View style={styles.contenedor}>
-            <TouchableOpacity
+          <View >
+            <TouchableOpacity style={styles.contenedor}
+              onPress={() => router.push("/(tabs)/calendarscreen")}
+            >
+              <Text style={styles.texto}>CALENDARIO</Text>
+            </TouchableOpacity>
+          </View>
+          <View >
+            <TouchableOpacity style={styles.contenedor}
+              onPress={() => router.push("/(tabs)/cultivosscreen")}
+            >
+              <Text style={styles.texto}>CULTIVOS</Text>
+            </TouchableOpacity>
+          </View>
+          <View >
+            <TouchableOpacity style={styles.contenedor}
               onPress={() => router.push("/(tabs)/addsensorscreen")}
             >
-              <Text style={styles.texto}>Sensor</Text>
+              <Text style={styles.texto}>DISPOSITIVOS</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.contenedor}>
-            <TouchableOpacity
-              onPress={() => router.push("/(tabs)/addinvernaderoscreen")}
+          <View >
+            <TouchableOpacity style={styles.contenedor}
+              onPress={() => router.push("/(tabs)/assistentscreen")}
             >
-              <Text style={styles.texto}>Invernadero</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.contenedor}>
-            <TouchableOpacity
-              onPress={() => router.push("/(tabs)/addcultivoscreen")}
-            >
-              <Text style={styles.texto}>Cultivo</Text>
+              <Text style={styles.texto}>ASISTENTE</Text>
             </TouchableOpacity>
           </View>
         </View>
       </View>
 
       <View style={styles.footer}>
-        <TouchableOpacity
-          onPress={() => router.push("/(tabs)/conectionscreen")}
-        >
-          <Image
-            source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")}
-            style={styles.iconsFooter}
-          />
+        <TouchableOpacity onPress={() => router.push('/(tabs)/conectionscreen')}>
+          <View style={styles.buttonFooter}>
+            <Image source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
+            <Text>Conexión</Text>
+          </View>
+
         </TouchableOpacity>
-        <TouchableOpacity>
-          <Image
-            source={require("../../assets/images/icons/mas.png")}
-            style={styles.iconsFooter}
-          />
+        <TouchableOpacity onPress={() => router.push('/(tabs)/panelscreen')}>
+          <View style={styles.buttonFooter}>
+            <Image source={require("../../assets/images/icons/iconocasa_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
+            <Text>Inicio</Text>
+          </View>
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => router.push("/(tabs)/assistentscreen")}
-        >
-          <Image
-            source={require("../../assets/images/icons/asistencia.png")}
-            style={styles.iconsFooter}
-          />
+        <TouchableOpacity onPress={() => router.push('/(tabs)/menuscreen')}>
+          <View style={styles.buttonFooter}>
+            <Image source={require("../../assets/images/icons/iconocategoria_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
+            <Text>Categorias</Text>
+          </View>
         </TouchableOpacity>
       </View>
     </View>
@@ -90,45 +101,73 @@ export default function UpdateScreen() {
 }
 
 const styles = StyleSheet.create({
+  backIcon: {
+    alignSelf: "flex-end",
+    marginRight: 10,
+    padding: 8,
+  },
+  buttonText: {
+    padding: 10,
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#29463D",
+    borderRadius: 8,
+  },
+  buttons: {
+    flexDirection: "row",
+  },
+  button: {
+    backgroundColor: "#CCCCCC",
+    padding: 10,
+    marginLeft: 5,
+    borderRadius: 8,
+  },
+  buttonFooter: {
+    flexDirection: 'column',
+    width: '70%',
+    height: 80,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 30
+  },
+  controlContainer: {
+    width: "90%",
+    height: 50,
+    marginBottom: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginHorizontal: "5%",
+  },
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
     alignItems: "flex-start",
     paddingTop: 28,
   },
+  contenedor: {
+    width: "80%",
+    borderRadius: 20,
+    height: 80,
+    justifyContent: "center",
+    backgroundColor: "#29463D",
+    alignItems: "center",
+    marginHorizontal: "10%",
+    marginVertical: 10,
+  },
   general: {
     flex: 1,
     width: "100%",
   },
-  titulo: {
-    fontSize: 25,
-    textAlign: "center",
-    margin: 50,
-  },
-  contenedor: {
-    width: "70%",
-    borderRadius: 20,
-    height: 100,
+  footer: {
+    flexDirection: "row",
     justifyContent: "center",
-    backgroundColor: "#29463D",
-    alignItems: "center",
-    marginHorizontal: "15%",
-    marginVertical: 5,
-  },
-  texto: {
-    color: "#FFFFFF",
-    fontSize: 20,
-  },
-  selectDispositivo: {
-    width: "90%",
-    marginHorizontal: "5%",
-    borderRadius: 50,
-  },
-  picker: {
-    height: 50,
     width: "100%",
-    backgroundColor: "#CCCCCC",
-    marginBottom: 20,
+    position: "absolute",
+    bottom: 0,
+    height: 85,
+    padding: 5,
+    backgroundColor: "#FFFFFF",
   },
   headerContainer: {
     flexDirection: "row",
@@ -143,115 +182,24 @@ const styles = StyleSheet.create({
   header: {
     padding: 8,
   },
-  backIcon: {
-    alignSelf: "flex-end",
-    marginRight: 10,
-    padding: 8,
+  texto: {
+    color: "#FFFFFF",
+    fontSize: 35,
+    fontWeight: '700'
+  },
+  titulo: {
+    fontSize: 25,
+    textAlign: "center",
+    margin: 50,
+  },
+  iconsFooter: {
+    width: 40,
+    height: 40,
   },
   welcome: {
     fontSize: 16,
     fontWeight: "500",
     color: "#29463D",
     marginTop: -8,
-  },
-  buttonText: {
-    padding: 10,
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#29463D",
-    borderRadius: 8,
-  },
-  inputContainer: {
-    width: "90%",
-    marginBottom: 20,
-    marginHorizontal: "5%",
-  },
-  label: {
-    fontSize: 16,
-    color: "#2D4B41",
-    marginBottom: 5,
-    fontWeight: 600,
-  },
-  input: {
-    backgroundColor: "#CCCCCC",
-    padding: 17,
-    borderRadius: 20,
-    color: "#29463D",
-    fontSize: 15,
-    fontWeight: 500,
-  },
-  controlContainer: {
-    width: "90%",
-    height: 50,
-    marginBottom: 20,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginHorizontal: "5%",
-  },
-  buttons: {
-    flexDirection: "row",
-  },
-  button: {
-    backgroundColor: "#CCCCCC",
-    padding: 10,
-    marginLeft: 5,
-    borderRadius: 8,
-  },
-  notesContainer: {
-    backgroundColor: "#CCCCCC",
-    padding: 12,
-    borderRadius: 15,
-    width: "90%",
-    height: 170,
-    marginBottom: 45,
-    marginTop: 10,
-    marginHorizontal: "5%",
-  },
-  notesLabel: {
-    color: "#29463D",
-    fontWeight: "bold",
-    fontSize: 17,
-  },
-  notesText: {
-    color: "#2D4B41",
-    paddingTop: 5,
-    fontWeight: "bold",
-    minHeight: 60,
-    textAlignVertical: "top",
-  },
-  saveButton: {
-    backgroundColor: "#29463D",
-    padding: 12,
-    borderRadius: 25,
-    alignItems: "center",
-    width: "90%",
-    marginBottom: 23,
-    marginHorizontal: "5%",
-  },
-  saveButtonText: {
-    color: "#FFFFFF",
-    fontWeight: "bold",
-    fontSize: 20,
-  },
-  iconsFooter: {
-    width: 40,
-    height: 40,
-  },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    width: "100%",
-    position: "absolute",
-    bottom: 0,
-    height: 65,
-    padding: 5,
-    backgroundColor: "#FFFFFF",
-  },
-  pickerParametros: {
-    backgroundColor: "#CCCCCC",
-    height: 42,
-    width: 42,
-    marginHorizontal: 5,
   },
 });

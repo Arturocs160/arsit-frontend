@@ -131,7 +131,7 @@ export default function UpdateScreen() {
         <View style={styles.general}>
           <View style={styles.headerContainer}>
             <Header></Header>
-            <TouchableOpacity onPress={() => router.push("/(tabs)/panelscreen")}>
+            <TouchableOpacity onPress={() => router.push("/(tabs)/cultivosscreen")}>
               <Ionicons
                 name="arrow-back"
                 size={30}
@@ -185,11 +185,15 @@ export default function UpdateScreen() {
               onChangeText={setCultivo}
             />
           </View>
-  
+          <View style={styles.parametroText}>
+            <Text style={{ fontWeight: '700', color: '#29463D', width:'30%', textAlign: 'center', marginRight: '22%', marginLeft:'5%'}}>Min.</Text>
+            <Text style={{fontWeight: '700', color: '#29463D', width:'35%', textAlign: 'center'}}>Max.</Text>
+          </View>
           <View style={styles.controlContainer}>
             <Text style={styles.label}>Temperatura</Text>
             <View style={styles.buttons}>
-              <Picker
+              <View style={styles.parametro}>
+                <Picker
                 selectedValue={temperaturaMin}
                 style={styles.pickerParametros}
                 onValueChange={(itemValue) => setTemperaturaMin(itemValue)}
@@ -198,8 +202,12 @@ export default function UpdateScreen() {
                   <Picker.Item key={i} label={`${i}°`} value={i} />
                 ))}
               </Picker>
-              <Text style={styles.buttonText}>{temperaturaMin}°</Text>
-              <Picker
+              </View>
+              <View style={styles.parametro}>
+                <Text style={styles.buttonText}>{temperaturaMin}°</Text>
+              </View>
+              <View style={styles.parametro}>
+                 <Picker
                 selectedValue={temperaturaMax}
                 style={styles.pickerParametros}
                 onValueChange={(itemValue) => setTemperaturaMax(itemValue)}
@@ -208,14 +216,22 @@ export default function UpdateScreen() {
                   <Picker.Item key={i} label={`${i}°`} value={i} />
                 ))}
               </Picker>
+              </View>
+             <View style={styles.parametro}>
               <Text style={styles.buttonText}>{temperaturaMax}°</Text>
+             </View>
+              
             </View>
           </View>
-  
+          <View style={styles.parametroText}>
+            <Text style={{ fontWeight: '700', color: '#29463D', width:'30%', textAlign: 'center', marginRight: '22%', marginLeft:'5%'}}>Min.</Text>
+            <Text style={{fontWeight: '700', color: '#29463D', width:'35%', textAlign: 'center'}}>Max.</Text>
+          </View>
           <View style={styles.controlContainer}>
             <Text style={styles.label}>Humedad</Text>
             <View style={styles.buttons}>
-              <Picker
+              <View style={styles.parametro}>
+                <Picker
                 selectedValue={humedadMin}
                 style={styles.pickerParametros}
                 onValueChange={(itemValue) => setHumedadMin(itemValue)}
@@ -224,8 +240,12 @@ export default function UpdateScreen() {
                   <Picker.Item key={i} label={`${i}°`} value={i} />
                 ))}
               </Picker>
-              <Text style={styles.buttonText}>{humedadMin}%</Text>
-              <Picker
+              </View>
+              <View style={styles.parametro}>
+<Text style={styles.buttonText}>{humedadMin}%</Text>
+              </View>
+              <View style={styles.parametro}>
+                <Picker
                 selectedValue={humedadMax}
                 style={styles.pickerParametros}
                 onValueChange={(itemValue) => setHumedadMax(itemValue)}
@@ -234,7 +254,11 @@ export default function UpdateScreen() {
                   <Picker.Item key={i} label={`${i}%`} value={i} />
                 ))}
               </Picker>
-              <Text style={styles.buttonText}>{humedadMax}%</Text>
+              </View>
+              <View style={styles.parametro}>
+                 <Text style={styles.buttonText}>{humedadMax}%</Text>
+              </View>
+             
             </View>
           </View>
   
@@ -270,36 +294,41 @@ export default function UpdateScreen() {
         </View>
         </KeyboardAvoidingView>
         {!keyboardVisible && (
-        <View style={styles.footer}>
-          <TouchableOpacity
-            onPress={() => router.push("/(tabs)/conectionscreen")}
-          >
-            <Image
-              source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")}
-              style={styles.iconsFooter}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Image
-              source={require("../../assets/images/icons/mas.png")}
-              style={styles.iconsFooter}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => router.push("/(tabs)/assistentscreen")}
-          >
-            <Image
-              source={require("../../assets/images/icons/asistencia.png")}
-              style={styles.iconsFooter}
-            />
-          </TouchableOpacity>
-        </View>
+       <View style={styles.footer}>
+       <TouchableOpacity onPress={() => router.push('/(tabs)/conectionscreen')}>
+         <View style={styles.buttonFooter}>
+           <Image source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
+           <Text>Conexión</Text>
+         </View>
+
+       </TouchableOpacity>
+       <TouchableOpacity onPress={() => router.push('/(tabs)/panelscreen')}>
+         <View style={styles.buttonFooter}>
+           <Image source={require("../../assets/images/icons/iconocasa_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
+           <Text>Inicio</Text>
+         </View>
+       </TouchableOpacity>
+       <TouchableOpacity onPress={() => router.push('/(tabs)/menuscreen')}>
+         <View style={styles.buttonFooter}>
+           <Image source={require("../../assets/images/icons/iconocategoria_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
+           <Text>Categorias</Text>
+         </View>
+       </TouchableOpacity>
+     </View>
       )}
     </View>
   );
   }
   
   const styles = StyleSheet.create({
+    buttonFooter: {
+      flexDirection: 'column',
+      width: '70%',
+      height: 80,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginHorizontal: 30
+    },
     container: {
       flex: 1,
       backgroundColor: "#FFFFFF",
@@ -331,20 +360,20 @@ export default function UpdateScreen() {
       marginTop: 25,
       marginLeft: 10,
     },
-    header: {
-      padding: 8,
-    },
+    // header: {
+    //   padding: 8,
+    // },
     backIcon: {
       alignSelf: "flex-end",
       marginRight: 10,
       padding: 8,
     },
-    welcome: {
-      fontSize: 16,
-      fontWeight: "500",
-      color: "#29463D",
-      marginTop: -8,
-    },
+    // welcome: {
+    //   fontSize: 16,
+    //   fontWeight: "500",
+    //   color: "#29463D",
+    //   marginTop: -8,
+    // },
     buttonText: {
       padding: 10,
       fontSize: 15,
@@ -382,6 +411,15 @@ export default function UpdateScreen() {
     },
     buttons: {
       flexDirection: "row",
+      width: '60%',
+    },
+    parametro: {
+      width: '25%',
+    },
+    parametroText:{
+      width: '50%',
+      flexDirection: 'row',
+      marginLeft: '50%',
     },
     button: {
       backgroundColor: "#CCCCCC",
@@ -394,9 +432,9 @@ export default function UpdateScreen() {
       padding: 12,
       borderRadius: 15,
       width: "90%",
-      height: 170,
-      marginBottom: 45,
-      marginTop: 10,
+      height: 150,
+      marginBottom: 35,
+      marginTop: 5,
       marginHorizontal: "5%",
     },
     notesLabel: {
@@ -431,13 +469,13 @@ export default function UpdateScreen() {
     },
     footer: {
       flexDirection: "row",
-    justifyContent: "space-around",
-    width: "100%",
-    position: "absolute",
-    bottom: 0,
-    height: 65,
-    padding: 5,
-    backgroundColor: "#FFFFFF",
+      justifyContent: "center",
+      width: "100%",
+      position: "absolute",
+      bottom: 0,
+      height: 85,
+      padding: 5,
+      backgroundColor: "#FFFFFF",
     },
     pickerParametros: {
       backgroundColor: "#CCCCCC",

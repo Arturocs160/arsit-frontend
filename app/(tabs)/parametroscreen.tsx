@@ -244,7 +244,7 @@ export default function ParametrosScreen() {
           ))}
         </View>
 
-        <TouchableOpacity onPress={() => router.push("/(tabs)/calendarscreen")}>
+        <TouchableOpacity >
           {/**/}
           <View style={styles.calendarContainer}>
             <View style={styles.calendar}>
@@ -276,35 +276,40 @@ export default function ParametrosScreen() {
           </View>
         </TouchableOpacity>
       </View>
-      <View style={styles.footer}>
-        <TouchableOpacity
-          onPress={() => router.push("/(tabs)/conectionscreen")}
-        >
-          <Image
-            source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")}
-            style={styles.iconsFooter}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => router.push("/(tabs)/menuscreen")}>
-          <Image
-            source={require("../../assets/images/icons/mas.png")}
-            style={styles.iconsFooter}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => router.push("/(tabs)/assistentscreen")}
-        >
-          <Image
-            source={require("../../assets/images/icons/asistencia.png")}
-            style={styles.iconsFooter}
-          />
-        </TouchableOpacity>
-      </View>
+ <View style={styles.footer}>
+                   <TouchableOpacity onPress={() => router.push('/(tabs)/conectionscreen')}>
+                     <View style={styles.buttonFooter}>
+                       <Image source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
+                       <Text>Conexión</Text>
+                     </View>
+         
+                   </TouchableOpacity>
+                   <TouchableOpacity onPress={() => router.push('/(tabs)/panelscreen')}>
+                     <View style={styles.buttonFooter}>
+                       <Image source={require("../../assets/images/icons/iconocasa_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
+                       <Text>Inicio</Text>
+                     </View>
+                   </TouchableOpacity>
+                   <TouchableOpacity onPress={() => router.push('/(tabs)/menuscreen')}>
+                     <View style={styles.buttonFooter}>
+                       <Image source={require("../../assets/images/icons/iconocategoria_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
+                       <Text>Categorias</Text>
+                     </View>
+                   </TouchableOpacity>
+                 </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  buttonFooter: {
+    flexDirection: 'column',
+    width: '70%',
+    height: 80,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 30
+  },
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
@@ -349,11 +354,11 @@ const styles = StyleSheet.create({
   },
   footer: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "center",
     width: "100%",
     marginTop: 5,
     padding: 5,
-    height: 65,
+    height: 85,
   },
   indicador: {
     width: "100%",

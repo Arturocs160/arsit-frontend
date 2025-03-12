@@ -98,7 +98,11 @@ export default function DeviceScreen() {
 
   return (
     <View style={styles.container}>
-      <KeyboardAvoidingView style={styles.containergeneral} behavior="padding">
+      <KeyboardAvoidingView 
+      
+      style={styles.containergeneral} behavior="padding"
+      
+      >
         <View style={styles.general}>
           <View style={styles.headerContainer}>
             <Header />
@@ -117,7 +121,11 @@ export default function DeviceScreen() {
           </View>
   
           {/* ScrollView con espacio al final para evitar superposiciones */}
-          <KeyboardAwareScrollView contentContainerStyle={styles.scrollContainer}>
+          <KeyboardAwareScrollView 
+          
+          contentContainerStyle={styles.scrollContainer}
+          
+          >
             <View style={styles.notesContainer}>
               <ScrollView>
                 {mensajes
@@ -139,11 +147,7 @@ export default function DeviceScreen() {
               </ScrollView>
             </View>
           </KeyboardAwareScrollView>
-        </View>
-      </KeyboardAvoidingView>
-  
-      {/* Input fijo justo arriba del footer */}
-      <View style={styles.inputContainer}>
+          <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
           placeholder="Escribe"
@@ -155,33 +159,50 @@ export default function DeviceScreen() {
           <Ionicons name="arrow-back" size={24} color="#29463D" />
         </TouchableOpacity>
       </View>
+        </View>
+        
+      </KeyboardAvoidingView>
+  
+      {/* Input fijo justo arriba del footer */}
+      
   
       {/* Footer fijo abajo */}
-      <View style={styles.footer}>
-        <TouchableOpacity onPress={() => router.push("/(tabs)/conectionscreen")}>
-          <Image
-            source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")}
-            style={styles.iconsFooter}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Image
-            source={require("../../assets/images/icons/mas.png")}
-            style={styles.iconsFooter}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => router.push("/(tabs)/assistentscreen")}>
-          <Image
-            source={require("../../assets/images/icons/asistencia.png")}
-            style={styles.iconsFooter}
-          />
-        </TouchableOpacity>
-      </View>
+{!keyboardVisible && (
+                <View style={styles.footer}>
+                    <TouchableOpacity onPress={() => router.push('/(tabs)/conectionscreen')}>
+                        <View style={styles.buttonFooter}>
+                            <Image source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
+                            <Text>Conexión</Text>
+                        </View>
+
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => router.push('/(tabs)/panelscreen')}>
+                        <View style={styles.buttonFooter}>
+                            <Image source={require("../../assets/images/icons/iconocasa_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
+                            <Text>Inicio</Text>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => router.push('/(tabs)/menuscreen')}>
+                        <View style={styles.buttonFooter}>
+                            <Image source={require("../../assets/images/icons/iconocategoria_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
+                            <Text>Categorias</Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  buttonFooter: {
+    flexDirection: 'column',
+    width: '70%',
+    height: 80,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 30
+},
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
@@ -271,7 +292,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 10,
     width: "90%",
-    alignSelf: "center",
+    // alignSelf: "center",
+    // marginHorizontal: '5%',
     position: "absolute",
     bottom: 80, 
     left: "5%", 
@@ -280,6 +302,7 @@ const styles = StyleSheet.create({
   },  
   input: {
     flex: 1,
+    width: '100%',
     backgroundColor: "#CCCCCC",
     padding: 17,
     borderRadius: 20,
@@ -289,11 +312,11 @@ const styles = StyleSheet.create({
   },
   footer: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "center",
     width: "100%",
     position: "absolute",
     bottom: 0,
-    height: 65,
+    height: 85,
     padding: 5,
     backgroundColor: "#FFFFFF",
   },

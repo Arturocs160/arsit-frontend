@@ -92,11 +92,15 @@ export default function DeviceScreen() {
         <View style={styles.general}>
           <View style={styles.headerContainer}>
             <Header />
-            <TouchableOpacity onPress={() => router.push("/(tabs)/panelscreen")}>
+            <TouchableOpacity onPress={() => router.push("/(tabs)/invernaderoscreen")}>
               <Ionicons name="arrow-back" size={30} color="#2D4B41" style={styles.backIcon} />
             </TouchableOpacity>
           </View>
           <KeyboardAwareScrollView>
+            <View style={styles.titulo}>
+                          <Text style={styles.textoTitulo} >EDITAR INVERNADERO</Text>
+                        </View>
+            <View style={{marginTop: 40}}>
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.input}
@@ -115,10 +119,23 @@ export default function DeviceScreen() {
                 onChangeText={setUbicacion}
               />
             </View>
+            </View>
 
+            <View style={{marginTop: 30}}>
             <TouchableOpacity style={styles.saveButton} onPress={() => actualizarInvernadero(nombre, ubicacion)}>
               <Text style={styles.saveButtonText}>GUARDAR</Text>
             </TouchableOpacity>
+             <TouchableOpacity style={styles.deleteButton}
+                            // onPress={() =>
+                            //   (
+                            //     nombre,
+                            //     ubicacion
+                            //   )
+                            // }
+                            >
+                            <Text style={styles.deleteButtonText}>ELIMINAR</Text>
+                          </TouchableOpacity>
+            </View>
           </KeyboardAwareScrollView>
         </View>
       </KeyboardAvoidingView>
@@ -155,7 +172,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    width: "90%",
+    width: "95%",
     height: 50,
     marginBottom: 20,
     marginTop: 25,
@@ -165,6 +182,17 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     marginRight: 10,
     padding: 8,
+  },
+  titulo: {
+    width: '90%',
+    marginHorizontal: '5%',
+    alignItems: 'center'
+  },
+  textoTitulo: {
+    fontSize: 27,
+    fontWeight: '800',
+    color: "#29463D",
+    marginTop: 20
   },
   inputContainer: {
     width: "90%",
@@ -184,10 +212,25 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     alignItems: "center",
     width: "90%",
-    marginBottom: 23,
+    marginBottom: 10,
     marginHorizontal: "5%",
   },
   saveButtonText: {
+    color: "#FFFFFF",
+    fontWeight: "bold",
+    fontSize: 20,
+  },
+  deleteButton: {
+    backgroundColor: "#bce392",
+    padding: 12,
+    borderRadius: 25,
+    alignItems: "center",
+    width: "90%",
+    marginBottom: 10,
+    marginTop: 10,
+    marginHorizontal: "5%",
+  },
+  deleteButtonText: {
     color: "#FFFFFF",
     fontWeight: "bold",
     fontSize: 20,
