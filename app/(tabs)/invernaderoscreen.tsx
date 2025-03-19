@@ -44,6 +44,7 @@ export default function DeviceScreen() {
         `${process.env.EXPO_PUBLIC_BASE_URL}/invernaderos`
       );
       setInvernaderos(response.data);
+      console.log(response.data)
     } catch (error) {
       console.error("Error al obtener los invernaderos:", error);
     }

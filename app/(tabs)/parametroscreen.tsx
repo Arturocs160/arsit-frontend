@@ -180,7 +180,7 @@ export default function ParametrosScreen() {
             // backgroundColor = {}
           />
         </View>
-        <View style={{ width: "50%", alignSelf: "center", marginTop: 10 }}>
+        {/* <View style={{ width: "50%", alignSelf: "center", marginTop: 10 }}>
           <Picker
             selectedValue={invernaderoSeleccionado}
             style={styles.picker}
@@ -194,7 +194,6 @@ export default function ParametrosScreen() {
             ))}
           </Picker>
 
-          {/* Obtener el invernadero seleccionado */}
           {invernaderoSeleccionado && (
             <View style={{ flexDirection: "row", justifyContent: "center", marginTop: 10 }}>
               <TouchableOpacity onPress={() => router.push(`/updateinvernaderoscreen?invernaderoId=${invernaderoSeleccionado}`)}>
@@ -206,8 +205,8 @@ export default function ParametrosScreen() {
               </TouchableOpacity>
             </View>
           )}
-        </View>
-        <View style={styles.tituloContainer}>
+        </View> */}
+        {/* <View style={styles.tituloContainer}>
           {cultivos.map((cultivo, index) => (
             <View key={index} style={styles.tituloContainer}>
               <Text style={styles.titulo}>{cultivo.cultivo}</Text>
@@ -235,14 +234,14 @@ export default function ParametrosScreen() {
               </View>
             </View>
           ))}
-        </View>
-        <View style={styles.notasContainer}>
+        </View> */}
+        {/* <View style={styles.notasContainer}>
           {cultivos.map((cultivo, index) => (
             <View key={index} style={styles.tituloContainer}>
               <Text>{cultivo.nota}</Text>
             </View>
           ))}
-        </View>
+        </View> */}
 
         <TouchableOpacity >
           {/**/}

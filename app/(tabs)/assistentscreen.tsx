@@ -11,6 +11,7 @@ import {
   Button,
   Keyboard,
   KeyboardAvoidingView,
+  ActivityIndicator,
 } from "react-native";
 
 import { useState } from "react";
@@ -28,6 +29,7 @@ export default function DeviceScreen() {
       content: string;
     }[]
   >([]);
+  const [loading, setLoading] = useState(false)
 
   const router = useRouter();
 
@@ -58,7 +60,8 @@ export default function DeviceScreen() {
   };
 
   async function handleSend() {
-    if (mensaje.trim()) {
+    if (mensaje) {
+      setLoading(true)
       let messages =
         mensajes.length > 0
           ? mensajes
@@ -66,30 +69,39 @@ export default function DeviceScreen() {
               {
                 role: "system",
                 content:
-                  "Responde basado únicamente en la conversación previa.",
+                  "Eres un asistente útil en temas de agricultura que responderá a las preguntas del usuario, de la manera más precisa y concisa a la pregunta",
               },
             ];
 
-      messages = messages.map((mensaje) => ({
-        ...mensaje,
-        role: mensaje.role === "assistant" ? "system" : mensaje.role,
-      }));
+      messages = messages.map((mensaje) => {
+        return {
+          ...mensaje,
+          role: mensaje.role === "assistant" ? "system" : mensaje.role,
+        };
+      });
 
-      const newMessages = [...messages, { role: "user", content: mensaje }];
+      messages.push({
+        role: "user",
+        content: mensaje,
+      });
 
-      const data = { messages: newMessages };
+      const data = {
+        "messages": messages,
+      };
 
       try {
         const result = await axios.post(
           `${process.env.EXPO_PUBLIC_BASE_URL}/chatbot/completion`,
           data
         );
-
-        setMensajes([...newMessages, ...result.data.slice(2)]);
+        const newMessages = result.data.slice(1);
+        setMensajes(newMessages);
         setMensaje("");
       } catch (error) {
-        console.error("Error al enviar el mensaje:", error);
-        alert("Hubo un error al enviar el mensaje.");
+        console.error("Error en la solicitud del chatbot:", error);
+        alert("Hubo un problema con la respuesta del chatbot");
+      } finally {
+        setLoading(false)
       }
     } else {
       alert("Primero debes escribir un mensaje");
@@ -98,15 +110,13 @@ export default function DeviceScreen() {
 
   return (
     <View style={styles.container}>
-      <KeyboardAvoidingView 
-      
-      style={styles.containergeneral} behavior="padding"
-      
-      >
+      <KeyboardAvoidingView style={styles.containergeneral} behavior="padding">
         <View style={styles.general}>
           <View style={styles.headerContainer}>
             <Header />
-            <TouchableOpacity onPress={() => router.push("/(tabs)/panelscreen")}>
+            <TouchableOpacity
+              onPress={() => router.push("/(tabs)/panelscreen")}
+            >
               <Ionicons
                 name="arrow-back"
                 size={30}
@@ -115,16 +125,14 @@ export default function DeviceScreen() {
               />
             </TouchableOpacity>
           </View>
-  
+
           <View style={styles.textContainer}>
             <Text style={styles.text}>Soporte</Text>
           </View>
-  
+
           {/* ScrollView con espacio al final para evitar superposiciones */}
-          <KeyboardAwareScrollView 
-          
-          contentContainerStyle={styles.scrollContainer}
-          
+          <KeyboardAwareScrollView
+            contentContainerStyle={styles.scrollContainer}
           >
             <View style={styles.notesContainer}>
               <ScrollView>
@@ -145,64 +153,75 @@ export default function DeviceScreen() {
                     );
                   })}
               </ScrollView>
+              {/* Este es el spinner */}
+              {loading && <ActivityIndicator size="large" color="#0000ff" />}
+
             </View>
           </KeyboardAwareScrollView>
           <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Escribe"
-          placeholderTextColor="#29463D"
-          value={mensaje}
-          onChangeText={handleMensaje}
-        />
-        <TouchableOpacity onPress={handleSend}>
-          <Ionicons name="arrow-back" size={24} color="#29463D" />
-        </TouchableOpacity>
-      </View>
+            <TextInput
+              style={styles.input}
+              placeholder="Escribe"
+              placeholderTextColor="#29463D"
+              value={mensaje}
+              onChangeText={handleMensaje}
+            />
+            <TouchableOpacity onPress={handleSend} disabled={loading}>
+              <Ionicons name="arrow-back" size={24} color="#29463D" />
+            </TouchableOpacity>
+          </View>
         </View>
-        
       </KeyboardAvoidingView>
-  
-      {/* Input fijo justo arriba del footer */}
-      
-  
-      {/* Footer fijo abajo */}
-{!keyboardVisible && (
-                <View style={styles.footer}>
-                    <TouchableOpacity onPress={() => router.push('/(tabs)/conectionscreen')}>
-                        <View style={styles.buttonFooter}>
-                            <Image source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
-                            <Text>Conexión</Text>
-                        </View>
 
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => router.push('/(tabs)/panelscreen')}>
-                        <View style={styles.buttonFooter}>
-                            <Image source={require("../../assets/images/icons/iconocasa_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
-                            <Text>Inicio</Text>
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => router.push('/(tabs)/menuscreen')}>
-                        <View style={styles.buttonFooter}>
-                            <Image source={require("../../assets/images/icons/iconocategoria_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
-                            <Text>Categorias</Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-            )}
+      {/* Input fijo justo arriba del footer */}
+
+      {/* Footer fijo abajo */}
+      {!keyboardVisible && (
+        <View style={styles.footer}>
+          <TouchableOpacity
+            onPress={() => router.push("/(tabs)/conectionscreen")}
+          >
+            <View style={styles.buttonFooter}>
+              <Image
+                source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")}
+                style={styles.iconsFooter}
+              />
+              <Text>Conexión</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push("/(tabs)/panelscreen")}>
+            <View style={styles.buttonFooter}>
+              <Image
+                source={require("../../assets/images/icons/iconocasa_Mesa de trabajo 1.png")}
+                style={styles.iconsFooter}
+              />
+              <Text>Inicio</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push("/(tabs)/menuscreen")}>
+            <View style={styles.buttonFooter}>
+              <Image
+                source={require("../../assets/images/icons/iconocategoria_Mesa de trabajo 1.png")}
+                style={styles.iconsFooter}
+              />
+              <Text>Categorias</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   buttonFooter: {
-    flexDirection: 'column',
-    width: '70%',
+    flexDirection: "column",
+    width: "70%",
     height: 80,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginHorizontal: 30
-},
+    alignItems: "center",
+    justifyContent: "center",
+    marginHorizontal: 30,
+  },
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
@@ -259,8 +278,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#CCCCCC",
     padding: 13,
     borderRadius: 15,
-    width: "auto", 
-    maxWidth: "90%", 
+    width: "auto",
+    maxWidth: "90%",
     marginBottom: 50,
     marginLeft: 40,
   },
@@ -268,8 +287,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#CCCCCC",
     padding: 13,
     borderRadius: 15,
-    width: "auto", 
-    maxWidth: "90%", 
+    width: "auto",
+    maxWidth: "90%",
     marginBottom: 50,
     marginRight: 65,
   },
@@ -295,14 +314,14 @@ const styles = StyleSheet.create({
     // alignSelf: "center",
     // marginHorizontal: '5%',
     position: "absolute",
-    bottom: 80, 
-    left: "5%", 
-    right: "5%", 
-    zIndex: 10, 
-  },  
+    bottom: 80,
+    left: "5%",
+    right: "5%",
+    zIndex: 10,
+  },
   input: {
     flex: 1,
-    width: '100%',
+    width: "100%",
     backgroundColor: "#CCCCCC",
     padding: 17,
     borderRadius: 20,
@@ -327,5 +346,4 @@ const styles = StyleSheet.create({
   scrollContainer: {
     paddingBottom: 80,
   },
-  
 });

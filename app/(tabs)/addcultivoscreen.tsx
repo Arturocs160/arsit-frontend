@@ -11,6 +11,7 @@ import {
   Image,
   Button,
   Keyboard,
+  Alert,
 } from "react-native";
 
 import { useState, useEffect } from "react";
@@ -34,10 +35,10 @@ export default function DeviceScreen() {
   const [invernaderos, setInvernaderos] = useState<Invernadero[]>([]);
   const [invernaderoSeleccionadoId, setInvernaderoSeleccionadoId] = useState(null);
   const [fechaActual, setFechaActual] = useState<Date>(fecha);
-  const [temperaturaMin, setTemperaturaMin] = useState<number>(30);
-  const [temperaturaMax, setTemperaturaMax] = useState<number>(40);
-  const [humedadMax, setHumedadMax] = useState<number>(60);
-  const [humedadMin, setHumedadMin] = useState<number>(25);
+  const [temperaturaMin, setTemperaturaMin] = useState<number>(0);
+  const [temperaturaMax, setTemperaturaMax] = useState<number>(0);
+  const [humedadMax, setHumedadMax] = useState<number>(0);
+  const [humedadMin, setHumedadMin] = useState<number>(0);
   const [dispositivoSeleccionado, setDispositivoSeleccionado] = useState("1");
   const [invernaderoSeleccionado, setInvernaderoSeleccionado] = useState("1");
 
@@ -84,6 +85,16 @@ export default function DeviceScreen() {
       alert(
         "Para guardar se necesita llenar todos los campos en los que se requiere información"
       );
+    } else if (!notas.trim()) {
+      Alert.alert(
+              "Campo faltante",
+              "El campo de notas se encuentra vacio",
+              [
+                {
+                  text: "Aceptar",
+                },
+              ]
+            );
     } else {
       const data = {
         cultivoId: undefined,
@@ -252,7 +263,7 @@ export default function DeviceScreen() {
                  onValueChange={(itemValue) => setHumedadMin(itemValue)}
                >
                  {Array.from({ length: 101 }, (_, i) => (
-                   <Picker.Item key={i} label={`${i}°`} value={i} />
+                   <Picker.Item key={i} label={`${i}%`} value={i} />
                  ))}
                </Picker>
               </View>
