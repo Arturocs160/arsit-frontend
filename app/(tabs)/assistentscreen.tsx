@@ -69,7 +69,7 @@ export default function DeviceScreen() {
               {
                 role: "system",
                 content:
-                  "Eres un asistente útil en temas de agricultura que responderá a las preguntas del usuario, de la manera más precisa y concisa a la pregunta",
+                  "Eres un asistente útil en temas de agricultura que responderá a las preguntas del usuario de la manera más precisa y concisa",
               },
             ];
 

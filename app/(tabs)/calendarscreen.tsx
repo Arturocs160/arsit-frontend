@@ -8,9 +8,10 @@ import {
   TouchableOpacity,
   Keyboard,
   KeyboardAvoidingView,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { router, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { Calendar, LocaleConfig } from "react-native-calendars";
 import { useState } from "react";
 import Header from "@/components/Header";
@@ -84,12 +85,14 @@ export default function CalendarScreen() {
   const [fechaInicio, setFechaInicio] = useState<Date | null>(null);
   const [fechaFinal, setFechaFinal] = useState<Date | null>(null);
   const [markedDates, setMarkedDates] = useState<MarkedDates>({});
-  const [fechasBaseDatos, setFechasBaseDatos] = useState<{
-    [key: string]: any;
-  }>({});
+  const [fechasBaseDatos, setFechasBaseDatos] = useState<{ [key: string]: any }>({});
   const [nota, setNota] = useState("");
   const [calendario, setCalendario] = useState<Calendario[]>([]);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [lengthDates, setLengthDates] = useState<number>(0);
+
+  const router = useRouter();
+  
 
   useEffect(() => {
     obtenerFechas();
@@ -97,18 +100,12 @@ export default function CalendarScreen() {
 
   const obtenerFechas = async () => {
     try {
-      const response = await axios.get(
-        `${process.env.EXPO_PUBLIC_BASE_URL}/calendario`
-      );
+      const response = await axios.get(`${process.env.EXPO_PUBLIC_BASE_URL}/calendario`);
       const fechasData = response.data;
-
       let newMarkedDates: { [key: string]: any } = {};
 
       fechasData.forEach((fecha: any) => {
-        const range = getMarkedRange(
-          new Date(fecha.fechaInicio),
-          new Date(fecha.fechaFinal)
-        );
+        const range = getMarkedRange(new Date(fecha.fechaInicio), new Date(fecha.fechaFinal));
         newMarkedDates = { ...newMarkedDates, ...range };
       });
 
@@ -119,23 +116,33 @@ export default function CalendarScreen() {
   };
 
   const handleDayPress = (day: { dateString: string }) => {
-    const fecha = new Date(day.dateString);
-    const formattedDate = day.dateString;
+    const fechaSeleccionada = day.dateString;
+    const fechaHoy = new Date();
+    const fechaHoyISO = fechaHoy.toISOString().split("T")[0];
 
-    // Si la fecha ya está marcada y no es de la BD, la deseleccionamos
+    if (fechaSeleccionada < fechaHoyISO) {
+      alert("No puedes seleccionar una fecha pasada.");
+      return;
+    }
+
+    const formattedDate = fechaSeleccionada;
     if (markedDates[formattedDate] && !fechasBaseDatos[formattedDate]) {
       const updatedMarkedDates = { ...markedDates };
       delete updatedMarkedDates[formattedDate];
-
       setMarkedDates(updatedMarkedDates);
       return;
     }
 
     let updatedMarkedDates = { ...markedDates };
+    const nuevaFechaInicio = new Date(fechaSeleccionada);
 
-    // Si no hay fecha de inicio o si ambas están definidas, reiniciar selección
+    if (isNaN(nuevaFechaInicio.getTime())) {
+      alert("Fecha inválida. Intenta seleccionar una fecha válida.");
+      return;
+    }
+
     if (!fechaInicio || (fechaInicio && fechaFinal)) {
-      setFechaInicio(fecha);
+      setFechaInicio(nuevaFechaInicio);
       setFechaFinal(null);
       updatedMarkedDates[formattedDate] = {
         startingDay: true,
@@ -144,8 +151,8 @@ export default function CalendarScreen() {
         textColor: "white",
       };
     } else {
-      if (fecha < fechaInicio) {
-        setFechaInicio(fecha);
+      if (nuevaFechaInicio < fechaInicio!) {
+        setFechaInicio(nuevaFechaInicio);
         updatedMarkedDates[formattedDate] = {
           startingDay: true,
           endingDay: true,
@@ -153,9 +160,8 @@ export default function CalendarScreen() {
           textColor: "white",
         };
       } else {
-        setFechaFinal(fecha);
-        const range = getMarkedRange(fechaInicio, fecha);
-
+        setFechaFinal(nuevaFechaInicio);
+        const range = getMarkedRange(fechaInicio!, nuevaFechaInicio);
         updatedMarkedDates = { ...updatedMarkedDates, ...range };
       }
     }
@@ -164,6 +170,8 @@ export default function CalendarScreen() {
   };
 
   const getMarkedRange = (startDate: Date, endDate: Date) => {
+    if (startDate.toISOString().split("T")[0] === "1970-01-01") return {};
+
     let markedRange: { [key: string]: any } = {};
     let currentDate = new Date(startDate);
 
@@ -196,64 +204,75 @@ export default function CalendarScreen() {
   };
 
   const guardarFechas = async () => {
+    if (!fechaInicio || fechaInicio.toISOString().split("T")[0] === "1970-01-01") {
+      alert("Debes seleccionar al menos una fecha.");
+      return;
+    }
+  
+    if (nota.trim() === "") {
+      alert("Debes colocar una nota.");
+      return;
+    }
+  
     try {
-      const data = {
-        fechaInicio,
-        fechaFinal,
+      const ajustarAUTC = (fecha: Date): string => {
+        return new Date(fecha.getTime() - fecha.getTimezoneOffset() * 60000).toISOString();
       };
-
-      const result = await axios.post(
-        `${process.env.EXPO_PUBLIC_BASE_URL}/calendario`,
-        data
-      );
-
+  
+      const fechaInicioAjustada = ajustarAUTC(new Date(fechaInicio));
+      const fechaFinalAjustada = fechaFinal ? ajustarAUTC(new Date(fechaFinal)) : fechaInicioAjustada; 
+      const data = {
+        fechaInicio: fechaInicioAjustada,
+        fechaFinal: fechaFinalAjustada,
+        nota,
+      };
+  
+      const result = await axios.post(`${process.env.EXPO_PUBLIC_BASE_URL}/calendario`, data);
+  
       if (result.status === 200) {
-        alert("Fechas guardadas correctamente");
+        Alert.alert("Recordatorio agregado", "El recordatorio fue agregado correctamente.", [
+          {
+            text: "Aceptar",
+            onPress: () => obtenerFechas(), 
+          },
+        ]);
         obtenerFechas();
       } else {
-        alert(
-          "Ocurrió un error al guardar las fechas, por favor intente más tarde"
-        );
+        alert("Ocurrió un error al guardar las fechas, por favor intente más tarde.");
       }
+  
+      setNota("");
+      setFechaInicio(null);
+      setFechaFinal(null);
     } catch (error) {
       console.error("Error al guardar las fechas:", error);
     }
   };
-
-
-    useEffect(() => {
-      const keyboardDidShowListener = Keyboard.addListener(
-        "keyboardDidShow",
-        () => {
-          setKeyboardVisible(true);
-        }
-      );
-      const keyboardDidHideListener = Keyboard.addListener(
-        "keyboardDidHide",
-        () => {
-          setKeyboardVisible(false);
-        }
-      );
   
-      return () => {
-        keyboardDidShowListener.remove();
-        keyboardDidHideListener.remove();
-      };
-    }, []);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener("keyboardDidShow", () => {
+      setKeyboardVisible(true);
+    });
+
+    const keyboardDidHideListener = Keyboard.addListener("keyboardDidHide", () => {
+      setKeyboardVisible(false);
+    });
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   return (
     <GestureHandlerRootView style={styles.container}>
       <KeyboardAvoidingView>
         <View style={styles.general}>
           <View style={styles.headerContainer}>
-            <Header></Header>
+            <Header />
             <TouchableOpacity onPress={() => router.push("/(tabs)/menuscreen")}>
-              <Ionicons
-                name="arrow-back"
-                size={30}
-                color="#2D4B41"
-                style={styles.backIcon}
-              />
+              <Ionicons name="arrow-back" size={30} color="#2D4B41" style={styles.backIcon} />
             </TouchableOpacity>
           </View>
           <KeyboardAwareScrollView>
@@ -277,64 +296,23 @@ export default function CalendarScreen() {
               </View>
             </View>
             <View style={styles.notesContainer}>
-              <TextInput
-                placeholder="NOTA"
-                style={styles.input}
-                placeholderTextColor="#29463D"
-                value={nota}
-                onChangeText={setNota}
-              />
-              {/* <TextInput placeholder="nota" /> */}
-
-              {/* <Text>NOTAaAAAAAAA</Text> */}
+              <TextInput placeholder="NOTA" style={styles.input} placeholderTextColor="#29463D" value={nota} onChangeText={setNota} />
             </View>
             <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                style={styles.saveButton}
-                onPress={() => guardarFechas()}
-              >
+              <TouchableOpacity style={styles.saveButton} onPress={guardarFechas}>
                 <Text style={styles.saveButtonText}>GUARDAR</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.saveButton} onPress={() => router.push("/(tabs)/recordatorioscreen")}>
+                <Text style={styles.saveButtonText}>VER RECORDATORIOS</Text>
               </TouchableOpacity>
             </View>
           </KeyboardAwareScrollView>
         </View>
       </KeyboardAvoidingView>
-      {!keyboardVisible && (
-              <View style={styles.footer}>
-                <TouchableOpacity
-                  onPress={() => router.push("/(tabs)/conectionscreen")}
-                >
-                  <View style={styles.buttonFooter}>
-                    <Image
-                      source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")}
-                      style={styles.iconsFooter}
-                    />
-                    <Text>Conexión</Text>
-                  </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => router.push("/(tabs)/panelscreen")}>
-                  <View style={styles.buttonFooter}>
-                    <Image
-                      source={require("../../assets/images/icons/iconocasa_Mesa de trabajo 1.png")}
-                      style={styles.iconsFooter}
-                    />
-                    <Text>Inicio</Text>
-                  </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => router.push("/(tabs)/menuscreen")}>
-                  <View style={styles.buttonFooter}>
-                    <Image
-                      source={require("../../assets/images/icons/iconocategoria_Mesa de trabajo 1.png")}
-                      style={styles.iconsFooter}
-                    />
-                    <Text>Categorias</Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
-            )}
     </GestureHandlerRootView>
   );
 }
+
 
 const styles = StyleSheet.create({
   buttonFooter: {

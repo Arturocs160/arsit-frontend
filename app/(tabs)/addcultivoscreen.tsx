@@ -40,7 +40,7 @@ export default function DeviceScreen() {
   const [humedadMax, setHumedadMax] = useState<number>(0);
   const [humedadMin, setHumedadMin] = useState<number>(0);
   const [dispositivoSeleccionado, setDispositivoSeleccionado] = useState("1");
-  const [invernaderoSeleccionado, setInvernaderoSeleccionado] = useState("1");
+  const [invernaderoSeleccionado, setInvernaderoSeleccionado] = useState(null);
 
   const router = useRouter();
 
@@ -86,20 +86,22 @@ export default function DeviceScreen() {
         "Para guardar se necesita llenar todos los campos en los que se requiere información"
       );
     } else if (!notas.trim()) {
-      Alert.alert(
-              "Campo faltante",
-              "El campo de notas se encuentra vacio",
-              [
-                {
-                  text: "Aceptar",
-                },
-              ]
-            );
+      Alert.alert("Campo faltante", "El campo de notas se encuentra vacio", [
+        {
+          text: "Aceptar",
+        },
+      ]);
+    } else if (!invernaderoSeleccionado) {
+      Alert.alert("Datos faltantes", "Debe escoger un invernadero valido", [
+        {
+          text: "Aceptar",
+        },
+      ]);
     } else {
       const data = {
         cultivoId: undefined,
         cultivo: cultivo,
-        invernaderoId: invernaderoSeleccionadoId,
+        invernaderoId: invernaderoSeleccionado,
         fecha_siembra: fechaFormateada,
         nota: notas,
         temperaturaMin: temperaturaMin,
@@ -118,9 +120,13 @@ export default function DeviceScreen() {
       } else {
         alert("Ocurrio un error, favor de intentar más tarde");
       }
-      setInvernaderoSeleccionadoId(null);
+      setInvernaderoSeleccionado(null);
       setCultivo("");
       setNotas("");
+      setHumedadMax(0)
+      setHumedadMin(0)
+      setTemperaturaMax(0)
+      setTemperaturaMin(0)
     }
   }
 
@@ -149,8 +155,7 @@ export default function DeviceScreen() {
     <View style={styles.container}>
       <KeyboardAvoidingView>
         {/* <Button title="Volver a Home" onPress={() => router.back()} /> */}
-        <View
-          style={styles.general}>
+        <View style={styles.general}>
           <View style={styles.headerContainer}>
             <Header></Header>
             <TouchableOpacity
@@ -164,180 +169,232 @@ export default function DeviceScreen() {
               />
             </TouchableOpacity>
           </View>
-        <KeyboardAwareScrollView>
-          <View style={styles.selectDispositivo}>
-            <Picker
-              placeholder="Dispositivo"
-              selectedValue={dispositivoSeleccionado}
-              style={styles.picker}
-              onValueChange={(itemValue) =>
-                setDispositivoSeleccionado(itemValue)
-              }
-            >
-              <Picker.Item label="Dispositivo 1" value="1" />
-              <Picker.Item label="Dispositivo 2" value="2" />
-              <Picker.Item label="Dispositivo 3" value="3" />
-              <Picker.Item label="Dispositivo 4" value="4" />
-            </Picker>
-          </View>
-          <View style={styles.inputContainer}>
-            {/* <Text style={styles.label}>Nombre</Text> */}
-            <View>
+          <KeyboardAwareScrollView>
+            <View style={styles.selectDispositivo}>
               <Picker
-                placeholder="Invernadero"
-                selectedValue={invernaderoSeleccionadoId}
+                placeholder="Dispositivo"
+                selectedValue={dispositivoSeleccionado}
                 style={styles.picker}
                 onValueChange={(itemValue) =>
-                  setInvernaderoSeleccionadoId(itemValue)
+                  setDispositivoSeleccionado(itemValue)
                 }
               >
-                {invernaderos.map((invernadero, index) => (
-                  <Picker.Item
-                    key={invernadero._id}
-                    label={invernadero.nombre}
-                    value={invernadero._id}
-                  />
-                ))}
-                
+                <Picker.Item label="Dispositivo 1" value="1" />
+                <Picker.Item label="Dispositivo 2" value="2" />
+                <Picker.Item label="Dispositivo 3" value="3" />
+                <Picker.Item label="Dispositivo 4" value="4" />
               </Picker>
             </View>
-          </View>
-          <View style={styles.inputContainer}>
-            {/* <Text style={styles.label}>Cultivo</Text> */}
-            <TextInput
-              style={styles.input}
-              placeholder="Cultivo"
-              placeholderTextColor="#29463D"
-              value={cultivo}
-              onChangeText={setCultivo}
-            />
-          </View>
-          <View style={styles.parametroText}>
-            <Text style={{ fontWeight: '700', color: '#29463D', width:'30%', textAlign: 'center', marginRight: '22%', marginLeft:'5%'}}>Min.</Text>
-            <Text style={{fontWeight: '700', color: '#29463D', width:'35%', textAlign: 'center'}}>Max.</Text>
-          </View>
-          <View style={styles.controlContainer}>
-            <Text style={styles.label}>Temperatura</Text>
-            <View style={styles.buttons}>
-            <View style={styles.parametro}>
-            <Picker
-                 selectedValue={temperaturaMin}
-                 style={styles.pickerParametros}
-                 onValueChange={(itemValue) => setTemperaturaMin(itemValue)}
-               >
-                 {Array.from({ length: 101 }, (_, i) => (
-                   <Picker.Item key={i} label={`${i}°`} value={i} />
-                 ))}
-               </Picker>
+            <View style={styles.inputContainer}>
+              {/* <Text style={styles.label}>Nombre</Text> */}
+              <View>
+                <Picker
+                  placeholder="Invernadero"
+                  selectedValue={invernaderoSeleccionado}
+                  style={styles.picker}
+                  onValueChange={(itemValue) =>
+                    setInvernaderoSeleccionado(itemValue)
+                  }
+                >
+                  <Picker.Item label="Escoge un invernadero" value={null} />
+                  {invernaderos.map((invernadero) => (
+                    <Picker.Item
+                      key={invernadero._id}
+                      label={invernadero.nombre}
+                      value={invernadero._id}
+                    />
+                  ))}
+                </Picker>
               </View>
-              <View style={styles.parametro}>
-              <Text style={styles.buttonText}>{temperaturaMin}°</Text>
+            </View>
+            <View style={styles.inputContainer}>
+              {/* <Text style={styles.label}>Cultivo</Text> */}
+              <TextInput
+                style={styles.input}
+                placeholder="Cultivo"
+                placeholderTextColor="#29463D"
+                value={cultivo}
+                onChangeText={setCultivo}
+              />
+            </View>
+            <View style={styles.parametroText}>
+              <Text
+                style={{
+                  fontWeight: "700",
+                  color: "#29463D",
+                  width: "30%",
+                  textAlign: "center",
+                  marginRight: "22%",
+                  marginLeft: "5%",
+                }}
+              >
+                Min.
+              </Text>
+              <Text
+                style={{
+                  fontWeight: "700",
+                  color: "#29463D",
+                  width: "35%",
+                  textAlign: "center",
+                }}
+              >
+                Max.
+              </Text>
+            </View>
+            <View style={styles.controlContainer}>
+              <Text style={styles.label}>Temperatura</Text>
+              <View style={styles.buttons}>
+                <View style={styles.parametro}>
+                  <Picker
+                    selectedValue={temperaturaMin}
+                    style={styles.pickerParametros}
+                    onValueChange={(itemValue) => setTemperaturaMin(itemValue)}
+                  >
+                    {Array.from({ length: 101 }, (_, i) => (
+                      <Picker.Item key={i} label={`${i}°`} value={i} />
+                    ))}
+                  </Picker>
                 </View>
                 <View style={styles.parametro}>
-                <Picker
-                 selectedValue={temperaturaMax}
-                 style={styles.pickerParametros}
-                 onValueChange={(itemValue) => setTemperaturaMax(itemValue)}
-               >
-                 {Array.from({ length: 101 }, (_, i) => (
-                   <Picker.Item key={i} label={`${i}°`} value={i} />
-                 ))}
-               </Picker>
-              </View>
-              <View style={styles.parametro}>
-              <Text style={styles.buttonText}>{temperaturaMax}°</Text>
-              </View>
-            </View>
-          </View>
-          <View style={styles.parametroText}>
-            <Text style={{ fontWeight: '700', color: '#29463D', width:'30%', textAlign: 'center', marginRight: '22%', marginLeft:'5%'}}>Min.</Text>
-            <Text style={{fontWeight: '700', color: '#29463D', width:'35%', textAlign: 'center'}}>Max.</Text>
-          </View>
-          <View style={styles.controlContainer}>
-            <Text style={styles.label}>Humedad</Text>
-            <View style={styles.buttons}>
-            <View style={styles.parametro}>
-            <Picker
-                 selectedValue={humedadMin}
-                 style={styles.pickerParametros}
-                 onValueChange={(itemValue) => setHumedadMin(itemValue)}
-               >
-                 {Array.from({ length: 101 }, (_, i) => (
-                   <Picker.Item key={i} label={`${i}%`} value={i} />
-                 ))}
-               </Picker>
-              </View>
-              <View style={styles.parametro}><Text style={styles.buttonText}>{humedadMin}%</Text></View>
-              <View style={styles.parametro}>
-              <Picker
-                 selectedValue={humedadMax}
-                 style={styles.pickerParametros}
-                 onValueChange={(itemValue) => setHumedadMax(itemValue)}
-               >
-                 {Array.from({ length: 101 }, (_, i) => (
-                   <Picker.Item key={i} label={`${i}%`} value={i} />
-                 ))}
-               </Picker>
-              </View>
-              <View style={styles.parametro}>
-              <Text style={styles.buttonText}>{humedadMax}%</Text>
+                  <Text style={styles.buttonText}>{temperaturaMin}°</Text>
+                </View>
+                <View style={styles.parametro}>
+                  <Picker
+                    selectedValue={temperaturaMax}
+                    style={styles.pickerParametros}
+                    onValueChange={(itemValue) => setTemperaturaMax(itemValue)}
+                  >
+                    {Array.from({ length: 101 }, (_, i) => (
+                      <Picker.Item key={i} label={`${i}°`} value={i} />
+                    ))}
+                  </Picker>
+                </View>
+                <View style={styles.parametro}>
+                  <Text style={styles.buttonText}>{temperaturaMax}°</Text>
+                </View>
               </View>
             </View>
-          </View>
+            <View style={styles.parametroText}>
+              <Text
+                style={{
+                  fontWeight: "700",
+                  color: "#29463D",
+                  width: "30%",
+                  textAlign: "center",
+                  marginRight: "22%",
+                  marginLeft: "5%",
+                }}
+              >
+                Min.
+              </Text>
+              <Text
+                style={{
+                  fontWeight: "700",
+                  color: "#29463D",
+                  width: "35%",
+                  textAlign: "center",
+                }}
+              >
+                Max.
+              </Text>
+            </View>
+            <View style={styles.controlContainer}>
+              <Text style={styles.label}>Humedad</Text>
+              <View style={styles.buttons}>
+                <View style={styles.parametro}>
+                  <Picker
+                    selectedValue={humedadMin}
+                    style={styles.pickerParametros}
+                    onValueChange={(itemValue) => setHumedadMin(itemValue)}
+                  >
+                    {Array.from({ length: 101 }, (_, i) => (
+                      <Picker.Item key={i} label={`${i}%`} value={i} />
+                    ))}
+                  </Picker>
+                </View>
+                <View style={styles.parametro}>
+                  <Text style={styles.buttonText}>{humedadMin}%</Text>
+                </View>
+                <View style={styles.parametro}>
+                  <Picker
+                    selectedValue={humedadMax}
+                    style={styles.pickerParametros}
+                    onValueChange={(itemValue) => setHumedadMax(itemValue)}
+                  >
+                    {Array.from({ length: 101 }, (_, i) => (
+                      <Picker.Item key={i} label={`${i}%`} value={i} />
+                    ))}
+                  </Picker>
+                </View>
+                <View style={styles.parametro}>
+                  <Text style={styles.buttonText}>{humedadMax}%</Text>
+                </View>
+              </View>
+            </View>
 
-          <View style={styles.notesContainer}>
-            <Text style={styles.notesLabel}>Notas:</Text>
-            <TextInput
-              style={styles.notesText}
-              multiline
-              placeholder=""
-              placeholderTextColor="#2D4B41"
-              value={notas}
-              onChangeText={setNotas}
-            />
-          </View>
+            <View style={styles.notesContainer}>
+              <Text style={styles.notesLabel}>Notas:</Text>
+              <TextInput
+                style={styles.notesText}
+                multiline
+                placeholder=""
+                placeholderTextColor="#2D4B41"
+                value={notas}
+                onChangeText={setNotas}
+              />
+            </View>
 
-          <TouchableOpacity
-            style={styles.saveButton}
-            onPress={() =>
-              guardarCultivo(
-                notas,
-                cultivo,
-                temperaturaMin,
-                temperaturaMax,
-                humedadMin,
-                humedadMax,
-                fechaActual
-              )
-            }
-          >
-            <Text style={styles.saveButtonText}>GUARDAR</Text>
-          </TouchableOpacity>
-        </KeyboardAwareScrollView>
+            <TouchableOpacity
+              style={styles.saveButton}
+              onPress={() =>
+                guardarCultivo(
+                  notas,
+                  cultivo,
+                  temperaturaMin,
+                  temperaturaMax,
+                  humedadMin,
+                  humedadMax,
+                  fechaActual
+                )
+              }
+            >
+              <Text style={styles.saveButtonText}>GUARDAR</Text>
+            </TouchableOpacity>
+          </KeyboardAwareScrollView>
         </View>
       </KeyboardAvoidingView>
       {!keyboardVisible && (
         <View style={styles.footer}>
-                  <TouchableOpacity onPress={() => router.push('/(tabs)/conectionscreen')}>
-                    <View style={styles.buttonFooter}>
-                      <Image source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
-                      <Text>Conexión</Text>
-                    </View>
-        
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => router.push('/(tabs)/panelscreen')}>
-                    <View style={styles.buttonFooter}>
-                      <Image source={require("../../assets/images/icons/iconocasa_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
-                      <Text>Inicio</Text>
-                    </View>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => router.push('/(tabs)/menuscreen')}>
-                    <View style={styles.buttonFooter}>
-                      <Image source={require("../../assets/images/icons/iconocategoria_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
-                      <Text>Categorias</Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
+          <TouchableOpacity
+            onPress={() => router.push("/(tabs)/conectionscreen")}
+          >
+            <View style={styles.buttonFooter}>
+              <Image
+                source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")}
+                style={styles.iconsFooter}
+              />
+              <Text>Conexión</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push("/(tabs)/panelscreen")}>
+            <View style={styles.buttonFooter}>
+              <Image
+                source={require("../../assets/images/icons/iconocasa_Mesa de trabajo 1.png")}
+                style={styles.iconsFooter}
+              />
+              <Text>Inicio</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push("/(tabs)/menuscreen")}>
+            <View style={styles.buttonFooter}>
+              <Image
+                source={require("../../assets/images/icons/iconocategoria_Mesa de trabajo 1.png")}
+                style={styles.iconsFooter}
+              />
+              <Text>Categorias</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
       )}
     </View>
   );
@@ -345,12 +402,12 @@ export default function DeviceScreen() {
 
 const styles = StyleSheet.create({
   buttonFooter: {
-    flexDirection: 'column',
-    width: '70%',
+    flexDirection: "column",
+    width: "70%",
     height: 80,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginHorizontal: 30
+    alignItems: "center",
+    justifyContent: "center",
+    marginHorizontal: 30,
   },
   container: {
     flex: 1,
@@ -434,15 +491,15 @@ const styles = StyleSheet.create({
   },
   buttons: {
     flexDirection: "row",
-    width: '60%',
+    width: "60%",
   },
   parametro: {
-    width: '25%',
+    width: "25%",
   },
-  parametroText:{
-    width: '50%',
-    flexDirection: 'row',
-    marginLeft: '50%',
+  parametroText: {
+    width: "50%",
+    flexDirection: "row",
+    marginLeft: "50%",
   },
   button: {
     backgroundColor: "#CCCCCC",

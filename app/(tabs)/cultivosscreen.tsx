@@ -44,7 +44,7 @@ export default function DeviceScreen() {
       const response = await axios.get(
         `${process.env.EXPO_PUBLIC_BASE_URL}/cultivos`
       );
-      console.log(response.data);
+      // console.log(response.data);
       setCultivos(response.data);
     } catch (error) {
       console.error("Error al obtener los cultivos:", error);

@@ -23,6 +23,7 @@ interface Invernadero {
   nombre: string;
 }
 
+
 export default function UpdateScreen() {
   const params = useLocalSearchParams();
   const { cultivoId } = params;
@@ -35,14 +36,21 @@ export default function UpdateScreen() {
   const [temperaturaMax, setTemperaturaMax] = useState<number>(0);
   const [humedadMax, setHumedadMax] = useState<number>(0);
   const [humedadMin, setHumedadMin] = useState<number>(0);
-  const [invernaderoSeleccionado, setInvernaderoSeleccionado] = useState("1");
-  const [dispositivoSeleccionado, setDispositivoSeleccionado] = useState("1");
+  const [invernaderoSeleccionado, setInvernaderoSeleccionado] = useState("");
+  const [dispositivoSeleccionado, setDispositivoSeleccionado] = useState(null);
+  const [invernaderoID, setInvernaderoID] = useState("");
 
   const router = useRouter();
 
   useEffect(() => {
     obtenerInvernaderos();
   }, []);
+
+  useEffect(() => {
+    if (invernaderoID) {
+      obtenerInvernaderoPorID();
+    }
+  }, [invernaderoID]);
 
   const obtenerInvernaderos = async () => {
     try {
@@ -73,9 +81,23 @@ export default function UpdateScreen() {
       setTemperaturaMax(cultivoData.parametros_optimos.temperatura.max);
       setHumedadMin(cultivoData.parametros_optimos.humedad.min);
       setHumedadMax(cultivoData.parametros_optimos.humedad.max);
-      setDispositivoSeleccionado(cultivoData.invernaderoId);
+      // setDispositivoSeleccionado(cultivoData.invernaderoId);
+      setInvernaderoID(cultivoData.invernaderoId);
     } catch (error) {
       console.error("Error al obtener los detalles del cultivo:", error);
+    }
+  };
+
+  const obtenerInvernaderoPorID = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.EXPO_PUBLIC_BASE_URL}/invernaderos/${invernaderoID}`
+      );
+      console.log(invernaderoID);
+      console.log(response.data.nombre);
+      setInvernaderoSeleccionado(response.data._id);
+    } catch (error) {
+      console.error("Error al obtener los invernaderos:", error);
     }
   };
 
@@ -221,14 +243,14 @@ export default function UpdateScreen() {
               {/* <Text style={styles.label}>Nombre</Text> */}
               <View>
                 <Picker
-                  placeholder="Invernadero"
                   selectedValue={invernaderoSeleccionado}
                   style={styles.picker}
                   onValueChange={(itemValue) =>
                     setInvernaderoSeleccionado(itemValue)
                   }
                 >
-                  {invernaderos.map((invernadero, index) => (
+                  <Picker.Item label="Escoge un invernadero" value={null} />
+                  {invernaderos.map((invernadero) => (
                     <Picker.Item
                       key={invernadero._id}
                       label={invernadero.nombre}
@@ -339,7 +361,7 @@ export default function UpdateScreen() {
                     onValueChange={(itemValue) => setHumedadMin(itemValue)}
                   >
                     {Array.from({ length: 101 }, (_, i) => (
-                      <Picker.Item key={i} label={`${i}°`} value={i} />
+                      <Picker.Item key={i} label={`${i}%`} value={i} />
                     ))}
                   </Picker>
                 </View>
