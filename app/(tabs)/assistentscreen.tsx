@@ -135,7 +135,7 @@ export default function DeviceScreen() {
             contentContainerStyle={styles.scrollContainer}
           >
             <View style={styles.notesContainer}>
-              <ScrollView>
+              <ScrollView style = {{ paddingBottom: 20}}>
                 {mensajes
                   .filter((item) => item.role !== "system")
                   .map((item, index) => {
@@ -313,8 +313,8 @@ const styles = StyleSheet.create({
     width: "90%",
     // alignSelf: "center",
     // marginHorizontal: '5%',
-    position: "absolute",
-    bottom: 80,
+    position: "relative",
+    bottom: 75,
     left: "5%",
     right: "5%",
     zIndex: 10,

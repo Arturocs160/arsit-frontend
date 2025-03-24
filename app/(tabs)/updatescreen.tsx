@@ -110,6 +110,17 @@ export default function UpdateScreen() {
     humedadMax: number,
     fechaActual: Date
   ) {
+
+    if (temperaturaMin > temperaturaMax) {
+      alert("La temperatura máxima debe ser mayor a la minima");
+      return;
+    }
+
+    if (humedadMin > humedadMax) {
+      alert("La humeadad máxima debe ser mayor a la minima");
+      return;
+    }
+
     const fechaFormateada = fechaActual.toLocaleDateString("es-ES", {
       day: "2-digit",
       month: "2-digit",
@@ -224,6 +235,9 @@ export default function UpdateScreen() {
             contentContainerStyle={{ flexGrow: 1 }}
             showsVerticalScrollIndicator={false}
           >
+             <View style={styles.titulo}>
+                <Text style={styles.textoTitulo} >EDITAR CULTIVOS</Text>
+              </View>
             <View style={styles.selectDispositivo}>
               <Picker
                 placeholder="Dispositivo"
@@ -487,7 +501,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: "100%",
     backgroundColor: "#CCCCCC",
-    marginBottom: 20,
+    marginBottom: 12,
   },
   headerContainer: {
     flexDirection: "row",
@@ -498,6 +512,18 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 25,
     marginLeft: 10,
+  },
+  titulo: {
+    width: '90%',
+    marginHorizontal: '5%',
+    alignItems: 'center'
+  },
+  textoTitulo: {
+    fontSize: 27,
+    fontWeight: '800',
+    color: "#29463D",
+    marginTop: 10, 
+    marginBottom: 10
   },
   // header: {
   //   padding: 8,
@@ -542,7 +568,7 @@ const styles = StyleSheet.create({
   controlContainer: {
     width: "90%",
     height: 50,
-    marginBottom: 20,
+    marginBottom: 10,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -572,7 +598,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     width: "90%",
     height: 150,
-    marginBottom: 35,
+    marginBottom: 12,
     marginTop: 5,
     marginHorizontal: "5%",
   },

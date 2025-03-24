@@ -122,7 +122,7 @@ export default function DeviceScreen() {
                 </View>
               ))
             ) : (
-              <Text>No hay cultivos registrados</Text>
+              <View style={styles.invernaderosContenedor}><Text>No hay cultivos registrados</Text></View>
             )}
           </KeyboardAwareScrollView>
         </View>

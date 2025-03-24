@@ -33,7 +33,8 @@ export default function DeviceScreen() {
   const [notas, setNotas] = useState<string>("");
   const [cultivo, setCultivo] = useState<string>("");
   const [invernaderos, setInvernaderos] = useState<Invernadero[]>([]);
-  const [invernaderoSeleccionadoId, setInvernaderoSeleccionadoId] = useState(null);
+  const [invernaderoSeleccionadoId, setInvernaderoSeleccionadoId] =
+    useState(null);
   const [fechaActual, setFechaActual] = useState<Date>(fecha);
   const [temperaturaMin, setTemperaturaMin] = useState<number>(0);
   const [temperaturaMax, setTemperaturaMax] = useState<number>(0);
@@ -73,6 +74,16 @@ export default function DeviceScreen() {
       month: "2-digit",
       year: "numeric",
     });
+
+    if (temperaturaMin > temperaturaMax) {
+      alert("La temperatura máxima debe ser mayor a la minima");
+      return;
+    }
+
+    if (humedadMin > humedadMax) {
+      alert("La humeadad máxima debe ser mayor a la minima");
+      return;
+    }
 
     if (
       !cultivo ||
@@ -123,10 +134,10 @@ export default function DeviceScreen() {
       setInvernaderoSeleccionado(null);
       setCultivo("");
       setNotas("");
-      setHumedadMax(0)
-      setHumedadMin(0)
-      setTemperaturaMax(0)
-      setTemperaturaMin(0)
+      setHumedadMax(0);
+      setHumedadMin(0);
+      setTemperaturaMax(0);
+      setTemperaturaMin(0);
     }
   }
 
@@ -170,6 +181,9 @@ export default function DeviceScreen() {
             </TouchableOpacity>
           </View>
           <KeyboardAwareScrollView>
+            <View style={styles.titulo}>
+              <Text style={styles.textoTitulo} >AGREGAR CULTIVOS</Text>
+            </View>
             <View style={styles.selectDispositivo}>
               <Picker
                 placeholder="Dispositivo"
@@ -415,6 +429,18 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     paddingTop: 28,
   },
+  titulo: {
+    width: '90%',
+    marginHorizontal: '5%',
+    alignItems: 'center'
+  },
+  textoTitulo: {
+    fontSize: 27,
+    fontWeight: '800',
+    color: "#29463D",
+    marginTop: 10, 
+    marginBottom: 10
+  },
   general: {
     flex: 1,
     width: "100%",
@@ -428,7 +454,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: "100%",
     backgroundColor: "#CCCCCC",
-    marginBottom: 20,
+    marginBottom: 12,
   },
   headerContainer: {
     flexDirection: "row",
@@ -513,7 +539,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     width: "90%",
     height: 150,
-    marginBottom: 35,
+    marginBottom: 12,
     marginTop: 5,
     marginHorizontal: "5%",
   },
