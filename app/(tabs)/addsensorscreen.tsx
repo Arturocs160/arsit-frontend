@@ -139,7 +139,7 @@ export default function DeviceScreen() {
           <View style={styles.headerContainer}>
             <Header></Header>
             <TouchableOpacity
-              onPress={() => router.push("/(tabs)/panelscreen")}
+              onPress={() => router.push("/(tabs)/menuscreen")}
             >
               <Ionicons
                 name="arrow-back"
@@ -197,70 +197,6 @@ export default function DeviceScreen() {
             />
           </View>
 
-          <View style={styles.controlContainer}>
-            <Text style={styles.label}>Temperatura</Text>
-            <View style={styles.buttons}>
-              <Picker
-                selectedValue={temperaturaMin}
-                style={styles.pickerParametros}
-                onValueChange={(itemValue) => setTemperaturaMin(itemValue)}
-              >
-                {Array.from({ length: 101 }, (_, i) => (
-                  <Picker.Item key={i} label={`${i}°`} value={i} />
-                ))}
-              </Picker>
-              <Text style={styles.buttonText}>{temperaturaMin}°</Text>
-              <Picker
-                selectedValue={temperaturaMax}
-                style={styles.pickerParametros}
-                onValueChange={(itemValue) => setTemperaturaMax(itemValue)}
-              >
-                {Array.from({ length: 101 }, (_, i) => (
-                  <Picker.Item key={i} label={`${i}°`} value={i} />
-                ))}
-              </Picker>
-              <Text style={styles.buttonText}>{temperaturaMax}°</Text>
-            </View>
-          </View>
-
-          <View style={styles.controlContainer}>
-            <Text style={styles.label}>Humedad</Text>
-            <View style={styles.buttons}>
-              <Picker
-                selectedValue={humedadMin}
-                style={styles.pickerParametros}
-                onValueChange={(itemValue) => setHumedadMin(itemValue)}
-              >
-                {Array.from({ length: 101 }, (_, i) => (
-                  <Picker.Item key={i} label={`${i}°`} value={i} />
-                ))}
-              </Picker>
-              <Text style={styles.buttonText}>{humedadMin}%</Text>
-              <Picker
-                selectedValue={humedadMax}
-                style={styles.pickerParametros}
-                onValueChange={(itemValue) => setHumedadMax(itemValue)}
-              >
-                {Array.from({ length: 101 }, (_, i) => (
-                  <Picker.Item key={i} label={`${i}%`} value={i} />
-                ))}
-              </Picker>
-              <Text style={styles.buttonText}>{humedadMax}%</Text>
-            </View>
-          </View>
-
-          <View style={styles.notesContainer}>
-            <Text style={styles.notesLabel}>Notas:</Text>
-            <TextInput
-              style={styles.notesText}
-              multiline
-              placeholder=""
-              placeholderTextColor="#2D4B41"
-              value={notas}
-              onChangeText={setNotas}
-            />
-          </View>
-
           <TouchableOpacity
             style={styles.saveButton}
             onPress={() =>
@@ -280,101 +216,117 @@ export default function DeviceScreen() {
         </KeyboardAwareScrollView>
         </View>
       </KeyboardAvoidingView>
-      {!keyboardVisible && (
-        <View style={styles.footer}>
-          <TouchableOpacity
-            onPress={() => router.push("/(tabs)/conectionscreen")}
-          >
-            <Image
-              source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")}
-              style={styles.iconsFooter}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Image
-              source={require("../../assets/images/icons/mas.png")}
-              style={styles.iconsFooter}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => router.push("/(tabs)/assistentscreen")}
-          >
-            <Image
-              source={require("../../assets/images/icons/asistencia.png")}
-              style={styles.iconsFooter}
-            />
-          </TouchableOpacity>
-        </View>
-      )}
-    </View>
-  );
+   {!keyboardVisible && (
+          <View style={styles.footer}>
+            <TouchableOpacity
+              onPress={() => router.push("/(tabs)/conectionscreen")}
+            >
+              <View style={styles.buttonFooter}>
+                <Image
+                  source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")}
+                  style={styles.iconsFooter}
+                />
+                <Text>Conexión</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push("/(tabs)/panelscreen")}>
+              <View style={styles.buttonFooter}>
+                <Image
+                  source={require("../../assets/images/icons/iconocasa_Mesa de trabajo 1.png")}
+                  style={styles.iconsFooter}
+                />
+                <Text>Inicio</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push("/(tabs)/menuscreen")}>
+              <View style={styles.buttonFooter}>
+                <Image
+                  source={require("../../assets/images/icons/iconocategoria_Mesa de trabajo 1.png")}
+                  style={styles.iconsFooter}
+                />
+                <Text>Categorias</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
+    );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  container: { //
     flex: 1,
     backgroundColor: "#FFFFFF",
     alignItems: "flex-start",
     paddingTop: 28,
   },
-  general: {
+  general: { //
     flex: 1,
     width: "100%",
   },
-  selectDispositivo: {
+  selectDispositivo: { //
     width: "90%",
     marginHorizontal: "5%",
     borderRadius: 50,
   },
-  picker: {
+  picker: { //
     height: 50,
     width: "100%",
     backgroundColor: "#CCCCCC",
     marginBottom: 20,
   },
-  headerContainer: {
+  buttonFooter: {
+    flexDirection: 'column',
+    width: '70%',
+    height: 80,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 30
+  },
+  headerContainer: { //
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     width: "90%",
     height: 50,
+    marginHorizontal: '5%',
     marginBottom: 20,
     marginTop: 25,
-    marginLeft: 10,
+    // marginLeft: 10,
   },
   header: {
     padding: 8,
   },
-  backIcon: {
+  backIcon: { //
     alignSelf: "flex-end",
     marginRight: 10,
     padding: 8,
   },
-  welcome: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#29463D",
-    marginTop: -8,
-  },
-  buttonText: {
-    padding: 10,
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#29463D",
-    borderRadius: 8,
-  },
-  inputContainer: {
+  // welcome: {
+  //   fontSize: 16,
+  //   fontWeight: "500",
+  //   color: "#29463D",
+  //   marginTop: -8,
+  // },
+  // buttonText: {
+  //   padding: 10,
+  //   fontSize: 15,
+  //   fontWeight: "600",
+  //   color: "#29463D",
+  //   borderRadius: 8,
+  // },
+  inputContainer: { //
     width: "90%",
     marginBottom: 20,
     marginHorizontal: "5%",
   },
-  label: {
-    fontSize: 16,
-    color: "#2D4B41",
-    marginBottom: 5,
-    fontWeight: 600,
-  },
-  input: {
+  // label: {
+  //   fontSize: 16,
+  //   color: "#2D4B41",
+  //   marginBottom: 5,
+  //   fontWeight: 600,
+  // },
+  input: { //
     backgroundColor: "#CCCCCC",
     padding: 17,
     borderRadius: 20,
@@ -382,47 +334,47 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: 500,
   },
-  controlContainer: {
-    width: "90%",
-    height: 50,
-    marginBottom: 20,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginHorizontal: "5%",
-  },
-  buttons: {
-    flexDirection: "row",
-  },
-  button: {
-    backgroundColor: "#CCCCCC",
-    padding: 10,
-    marginLeft: 5,
-    borderRadius: 8,
-  },
-  notesContainer: {
-    backgroundColor: "#CCCCCC",
-    padding: 12,
-    borderRadius: 15,
-    width: "90%",
-    height: 170,
-    marginBottom: 45,
-    marginTop: 10,
-    marginHorizontal: "5%",
-  },
-  notesLabel: {
-    color: "#29463D",
-    fontWeight: "bold",
-    fontSize: 17,
-  },
-  notesText: {
-    color: "#2D4B41",
-    paddingTop: 5,
-    fontWeight: "bold",
-    minHeight: 60,
-    textAlignVertical: "top",
-  },
-  saveButton: {
+  // controlContainer: {
+  //   width: "100%",
+  //   height: 50,
+  //   marginBottom: 20,
+  //   flexDirection: "row",
+  //   justifyContent: "space-between",
+  //   alignItems: "center",
+  //   marginHorizontal: "5%",
+  // },
+  // buttons: {
+  //   flexDirection: "row",
+  // },
+  // button: {
+  //   backgroundColor: "#CCCCCC",
+  //   padding: 10,
+  //   marginLeft: 5,
+  //   borderRadius: 8,
+  // },
+  // notesContainer: {
+  //   backgroundColor: "#CCCCCC",
+  //   padding: 12,
+  //   borderRadius: 15,
+  //   width: "90%",
+  //   height: 170,
+  //   marginBottom: 45,
+  //   marginTop: 10,
+  //   marginHorizontal: "5%",
+  // },
+  // notesLabel: {
+  //   color: "#29463D",
+  //   fontWeight: "bold",
+  //   fontSize: 17,
+  // },
+  // notesText: {
+  //   color: "#2D4B41",
+  //   paddingTop: 5,
+  //   fontWeight: "bold",
+  //   minHeight: 60,
+  //   textAlignVertical: "top",
+  // },
+  saveButton: { //
     backgroundColor: "#29463D",
     padding: 12,
     borderRadius: 25,
@@ -442,18 +394,18 @@ const styles = StyleSheet.create({
   },
   footer: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "center",
     width: "100%",
     position: "absolute",
     bottom: 0,
-    height: 65,
+    height: 85,
     padding: 5,
     backgroundColor: "#FFFFFF",
   },
-  pickerParametros: {
-    backgroundColor: "#CCCCCC",
-    height: 42,
-    width: 42,
-    marginHorizontal: 5,
-  },
+  // pickerParametros: {
+  //   backgroundColor: "#CCCCCC",
+  //   height: 42,
+  //   width: 42,
+  //   marginHorizontal: 5,
+  // },
 });

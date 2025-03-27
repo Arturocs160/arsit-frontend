@@ -51,6 +51,25 @@ export default function DeviceScreen() {
 
                     </View>
                     <KeyboardAwareScrollView>
+                    {/* <View style={styles.text}><Text style={styles.textStyle}>Red:</Text></View> */}
+                    <View style={styles.inputContainer}>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Coloca tu red"
+                                placeholderTextColor="#29463D"
+                            />
+                        </View>
+                        <View style={styles.inputContainer}>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Contraseña"
+                                placeholderTextColor="#29463D"
+                            />
+                        </View>
+                        
+                        <TouchableOpacity style={styles.saveButton}>
+                            <Text style={styles.saveButtonText}>BUSCAR</Text>
+                        </TouchableOpacity>
                         <View style={styles.textContainer}>
 
                             {devices.map((device) => (
@@ -73,48 +92,46 @@ export default function DeviceScreen() {
 
                         </View>
 
-                        <View style={styles.inputContainer}>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Nombre"
-                                placeholderTextColor="#29463D"
-                            />
-                        </View>
+                        
 
-                        <TouchableOpacity style={styles.saveButton}>
-                            <Text style={styles.saveButtonText}>GUARDAR</Text>
-                        </TouchableOpacity>
                     </KeyboardAwareScrollView>
                 </View>
             </KeyboardAvoidingView>
             {!keyboardVisible && (
-                <View style={styles.footer}>
-                    <TouchableOpacity
-                        onPress={() => router.push("/(tabs)/conectionscreen")}
-                    >
-                        <Image
-                            source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")}
-                            style={styles.iconsFooter}
-                        />
-                    </TouchableOpacity>
-                    <TouchableOpacity>
-                        <Image
-                            source={require("../../assets/images/icons/mas.png")}
-                            style={styles.iconsFooter}
-                        />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => router.push("/(tabs)/assistentscreen")}
-                    >
-                        <Image
-                            source={require("../../assets/images/icons/asistencia.png")}
-                            style={styles.iconsFooter}
-                        />
-                    </TouchableOpacity>
-                </View>
-            )}
+        <View style={styles.footer}>
+          <TouchableOpacity
+            onPress={() => router.push("/(tabs)/conectionscreen")}
+          >
+            <View style={styles.buttonFooter}>
+              <Image
+                source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")}
+                style={styles.iconsFooter}
+              />
+              <Text>Conexión</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push("/(tabs)/panelscreen")}>
+            <View style={styles.buttonFooter}>
+              <Image
+                source={require("../../assets/images/icons/iconocasa_Mesa de trabajo 1.png")}
+                style={styles.iconsFooter}
+              />
+              <Text>Inicio</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push("/(tabs)/menuscreen")}>
+            <View style={styles.buttonFooter}>
+              <Image
+                source={require("../../assets/images/icons/iconocategoria_Mesa de trabajo 1.png")}
+                style={styles.iconsFooter}
+              />
+              <Text>Categorias</Text>
+            </View>
+          </TouchableOpacity>
         </View>
-    );
+      )}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -123,6 +140,23 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
         alignItems: 'flex-start',
         paddingTop: 28
+    },
+    buttonFooter: {
+        flexDirection: 'column',
+        width: '70%',
+        height: 80,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginHorizontal: 30
+    },
+    text: {
+        width: '90%',
+        marginHorizontal: '5%'
+    },
+    textStyle:{
+        fontSize: 18,
+        color: '#29463D',
+        fontWeight: 500
     },
     general: {
         flex: 1,
@@ -139,7 +173,7 @@ const styles = StyleSheet.create({
         height: 50,
         marginBottom: 50,
         marginTop: 25,
-        marginLeft: 20
+        marginHorizontal: '5%'
     },
     header: {
         padding: 8,
@@ -195,7 +229,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: '90%',
         marginHorizontal: '5%',
-        marginVertical: 23,
         marginBottom: 23,
     },
     saveButtonText: {
@@ -209,8 +242,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#CCCCCC',
         borderRadius: 20,
         paddingHorizontal: 10,
-        marginBottom: 40,
-        marginTop: 200,
+        marginBottom: 20,
         marginHorizontal: '5%'
     },
     input: {
@@ -228,12 +260,12 @@ const styles = StyleSheet.create({
     },
     footer: {
         flexDirection: "row",
-        justifyContent: "space-around",
+        justifyContent: "center",
         width: "100%",
         position: "absolute",
         bottom: 0,
-        height: 65,
+        height: 85,
         padding: 5,
         backgroundColor: "#FFFFFF",
-    },
+      },
 });
