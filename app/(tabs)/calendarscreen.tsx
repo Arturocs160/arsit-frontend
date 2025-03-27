@@ -80,19 +80,18 @@ interface MarkedDates {
   };
 }
 
+
 export default function CalendarScreen() {
   const [selected, setSelected] = useState("");
   const [fechaInicio, setFechaInicio] = useState<Date | null>(null);
   const [fechaFinal, setFechaFinal] = useState<Date | null>(null);
-  const [markedDates, setMarkedDates] = useState<MarkedDates>({});
+  const [markedDates, setMarkedDates] = useState<{ [key: string]: any }>({});
   const [fechasBaseDatos, setFechasBaseDatos] = useState<{ [key: string]: any }>({});
   const [nota, setNota] = useState("");
-  const [calendario, setCalendario] = useState<Calendario[]>([]);
+  const [selectionCount, setSelectionCount] = useState(0);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
-  const [lengthDates, setLengthDates] = useState<number>(0);
 
   const router = useRouter();
-  
 
   useEffect(() => {
     obtenerFechas();
@@ -125,48 +124,44 @@ export default function CalendarScreen() {
       return;
     }
 
-    const formattedDate = fechaSeleccionada;
-    if (markedDates[formattedDate] && !fechasBaseDatos[formattedDate]) {
-      const updatedMarkedDates = { ...markedDates };
-      delete updatedMarkedDates[formattedDate];
-      setMarkedDates(updatedMarkedDates);
+    if (selectionCount >= 2) {
+      alert("Solo puedes seleccionar un rango de dos fechas (inicio y final). Para reiniciar la selección, debes borrar las fechas seleccionadas.");
       return;
     }
 
+    const nuevaFechaSeleccionada = new Date(fechaSeleccionada);
     let updatedMarkedDates = { ...markedDates };
-    const nuevaFechaInicio = new Date(fechaSeleccionada);
 
-    if (isNaN(nuevaFechaInicio.getTime())) {
-      alert("Fecha inválida. Intenta seleccionar una fecha válida.");
-      return;
-    }
-
-    if (!fechaInicio || (fechaInicio && fechaFinal)) {
-      setFechaInicio(nuevaFechaInicio);
+    if (selectionCount === 0) {
+      setFechaInicio(nuevaFechaSeleccionada);
       setFechaFinal(null);
-      updatedMarkedDates[formattedDate] = {
+      updatedMarkedDates[fechaSeleccionada] = {
         startingDay: true,
         endingDay: true,
         color: "#29463d",
         textColor: "white",
       };
-    } else {
-      if (nuevaFechaInicio < fechaInicio!) {
-        setFechaInicio(nuevaFechaInicio);
-        updatedMarkedDates[formattedDate] = {
-          startingDay: true,
-          endingDay: true,
-          color: "#5cb85c",
-          textColor: "white",
-        };
-      } else {
-        setFechaFinal(nuevaFechaInicio);
-        const range = getMarkedRange(fechaInicio!, nuevaFechaInicio);
-        updatedMarkedDates = { ...updatedMarkedDates, ...range };
+      setSelectionCount(1);
+    } else if (selectionCount === 1) {
+      if (nuevaFechaSeleccionada < fechaInicio!) {
+        alert("La fecha final no puede ser anterior a la fecha de inicio.");
+        return;
       }
+
+      setFechaFinal(nuevaFechaSeleccionada);
+      const range = getMarkedRange(fechaInicio!, nuevaFechaSeleccionada);
+      updatedMarkedDates = { ...updatedMarkedDates, ...range };
+      setSelectionCount(2);
     }
 
     setMarkedDates(updatedMarkedDates);
+  };
+
+  const resetSelection = () => {
+    setFechaInicio(null);
+    setFechaFinal(null);
+    setSelectionCount(0);
+    setMarkedDates({});
   };
 
   const getMarkedRange = (startDate: Date, endDate: Date) => {
@@ -208,47 +203,44 @@ export default function CalendarScreen() {
       alert("Debes seleccionar al menos una fecha.");
       return;
     }
-  
+
     if (nota.trim() === "") {
       alert("Debes colocar una nota.");
       return;
     }
-  
+
     try {
       const ajustarAUTC = (fecha: Date): string => {
         return new Date(fecha.getTime() - fecha.getTimezoneOffset() * 60000).toISOString();
       };
-  
+
       const fechaInicioAjustada = ajustarAUTC(new Date(fechaInicio));
-      const fechaFinalAjustada = fechaFinal ? ajustarAUTC(new Date(fechaFinal)) : fechaInicioAjustada; 
+      const fechaFinalAjustada = fechaFinal ? ajustarAUTC(new Date(fechaFinal)) : fechaInicioAjustada;
       const data = {
         fechaInicio: fechaInicioAjustada,
         fechaFinal: fechaFinalAjustada,
         nota,
       };
-  
+
       const result = await axios.post(`${process.env.EXPO_PUBLIC_BASE_URL}/calendario`, data);
-  
+
       if (result.status === 200) {
         Alert.alert("Recordatorio agregado", "El recordatorio fue agregado correctamente.", [
           {
             text: "Aceptar",
-            onPress: () => obtenerFechas(), 
+            onPress: () => obtenerFechas(),
           },
         ]);
-        obtenerFechas();
       } else {
         alert("Ocurrió un error al guardar las fechas, por favor intente más tarde.");
       }
-  
+
       setNota("");
-      setFechaInicio(null);
-      setFechaFinal(null);
+      resetSelection();
     } catch (error) {
       console.error("Error al guardar las fechas:", error);
     }
   };
-  
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener("keyboardDidShow", () => {
@@ -302,6 +294,9 @@ export default function CalendarScreen() {
               <TouchableOpacity style={styles.saveButton} onPress={guardarFechas}>
                 <Text style={styles.saveButtonText}>GUARDAR</Text>
               </TouchableOpacity>
+              <TouchableOpacity style={styles.saveButton} onPress={resetSelection}>
+                <Text style={styles.saveButtonText}>REINICIAR SELECCIÓN</Text>
+              </TouchableOpacity>
               <TouchableOpacity style={styles.saveButton} onPress={() => router.push("/(tabs)/recordatorioscreen")}>
                 <Text style={styles.saveButtonText}>VER RECORDATORIOS</Text>
               </TouchableOpacity>
@@ -312,6 +307,7 @@ export default function CalendarScreen() {
     </GestureHandlerRootView>
   );
 }
+
 
 
 const styles = StyleSheet.create({

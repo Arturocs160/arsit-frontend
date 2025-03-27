@@ -93,8 +93,8 @@ export default function UpdateScreen() {
       const response = await axios.get(
         `${process.env.EXPO_PUBLIC_BASE_URL}/invernaderos/${invernaderoID}`
       );
-      console.log(invernaderoID);
-      console.log(response.data.nombre);
+      // console.log(invernaderoID);
+      // console.log(response.data.nombre);
       setInvernaderoSeleccionado(response.data._id);
     } catch (error) {
       console.error("Error al obtener los invernaderos:", error);
