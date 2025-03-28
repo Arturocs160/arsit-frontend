@@ -125,7 +125,7 @@ export default function CalendarScreen() {
     }
 
     if (selectionCount >= 2) {
-      alert("Solo puedes seleccionar un rango de dos fechas (inicio y final). Para reiniciar la selección, debes borrar las fechas seleccionadas.");
+      Alert.alert("Solo puedes seleccionar un rango de dos fechas (inicio y final).","Para reiniciar la selección, debes borrar las fechas seleccionadas con el botón reiniciar selección.");
       return;
     }
 

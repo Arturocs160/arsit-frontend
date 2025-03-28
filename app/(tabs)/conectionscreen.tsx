@@ -1,75 +1,100 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
   Image,
-  Button,
+  Alert,
   Keyboard,
   KeyboardAvoidingView,
-  Alert,
 } from "react-native";
-import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import Entypo from "@expo/vector-icons/Entypo";
 import Header from "@/components/Header";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function DeviceScreen() {
   const [wifi, setWifi] = useState("");
   const [password, setPassword] = useState("");
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false); // Estado para ver/ocultar contraseña
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const router = useRouter();
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [isConfigured, setIsConfigured] = useState(false);
 
   useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      () => setKeyboardVisible(true)
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      () => setKeyboardVisible(false)
-    );
-
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
+    const checkConfiguration = async () => {
+      const configured = await AsyncStorage.getItem("isConfigured");
+      setIsConfigured(configured === "true" && isConfigured === true);
     };
+    checkConfiguration();
   }, []);
 
-  const buscarDispositivo = async () => {
+  const marcarConfiguracionCompleta = async () => {
     try {
-      // Realizar la solicitud GET al backend, enviando wifi y password en los parámetros
-      const result = await axios.get(
-        `${process.env.EXPO_PUBLIC_BASE_URL}/sensores/dispositivos/${wifi}`
+      await AsyncStorage.setItem("isConfigured", "true");
+      setIsConfigured(true);
+      Alert.alert(
+        "Configuración completada",
+        "¡Ahora puedes usar la aplicación!"
       );
-
-      // Obtener los dispositivos de la respuesta
-      const dispositivos = result.data;
-
-      console.log(dispositivos);
-
-      if (dispositivos) {
-        // Mostrar los dispositivos encontrados
-        Alert.alert("Dispositivos encontrados", JSON.stringify(dispositivos));
-      } else {
-        // Mostrar mensaje si no se encontraron dispositivos
-        Alert.alert("No se encontraron dispositivos");
-      }
-
-      // Limpiar los inputs después de la búsqueda
-      setWifi("");
-      setPassword("");
+      router.push("/(tabs)/panelscreen");
     } catch (error) {
-      // Mostrar mensaje de error si falla la solicitud
-      Alert.alert("Error", "No se pudo obtener los dispositivos");
-      console.error("Error al buscar dispositivos:", error);
+      console.error("Error al guardar configuración:", error);
+    }
+  };
+
+  const buscarDispositivo = async () => {
+    if (wifi && password) {
+      try {
+        const result = await axios.get(
+          `${process.env.EXPO_PUBLIC_BASE_URL}/sensores/dispositivos`,
+          {
+            params: { wifi, password },
+          }
+        );
+
+        const dispositivos = result.data;
+
+        if (dispositivos) {
+          Alert.alert(
+            "Conexion establecida",
+            `Dispositivos encontrados con la red encontrada: ${dispositivos[0].wifi}`,
+            [
+              {
+                text: "Aceptar",
+                onPress: marcarConfiguracionCompleta,
+              },
+            ]
+          );
+        } else {
+          Alert.alert(
+            "No se encontraron dispositivos con la red proporcionada"
+          );
+        }
+
+        guardarDispositivos(dispositivos);
+        setWifi("");
+        setPassword("");
+      } catch (error) {
+        Alert.alert(
+          "Error",
+          "No se encontraron dispositivos con la red proporcionada"
+        );
+      }
+    } else {
+      Alert.alert("Falta de datos", "Necesita ingresar los datos solicitados");
+    }
+  };
+
+  const guardarDispositivos = async (dispositivos: any) => {
+    try {
+      await AsyncStorage.setItem("dispositivos", JSON.stringify(dispositivos));
+      console.log("Dispositivos guardados correctamente");
+    } catch (error) {
+      console.error("Error al guardar dispositivos:", error);
     }
   };
 
@@ -77,19 +102,34 @@ export default function DeviceScreen() {
     <View style={styles.container}>
       <KeyboardAvoidingView>
         <View style={styles.general}>
-           <View style={styles.headerContainer}>
-                      <Header />
-                      <TouchableOpacity
-                        onPress={() => router.push("/(tabs)/panelscreen")}
-                      >
-                        <Ionicons
-                          name="arrow-back"
-                          size={30}
-                          color="#2D4B41"
-                          style={styles.backIcon}
-                        />
-                      </TouchableOpacity>
-                    </View>
+          <View style={styles.headerContainer}>
+            <Header />
+            <TouchableOpacity
+              onPress={() => {
+                if (isConfigured) {
+                  router.push("/(tabs)/panelscreen");
+                } else {
+                  Alert.alert(
+                    "Configuración requerida",
+                    "Debes configurar el dispositivo primero."
+                  );
+                }
+              }}
+            >
+              <Ionicons
+                name="arrow-back"
+                size={30}
+                color="#2D4B41"
+                style={styles.backIcon}
+              />
+            </TouchableOpacity>
+          </View>
+
+          <View>
+            <View style={styles.titulo}>
+              <Text style={styles.textoTitulo}>CONFIGURACIÓN RED</Text>
+            </View>
+          </View>
 
           <View style={styles.inputContainer}>
             <TextInput
@@ -105,13 +145,13 @@ export default function DeviceScreen() {
               style={styles.input}
               placeholder="Contraseña"
               placeholderTextColor="#29463D"
-              secureTextEntry={!isPasswordVisible} // Controla la visibilidad de la contraseña
+              secureTextEntry={!isPasswordVisible}
               value={password}
               onChangeText={setPassword}
             />
             <TouchableOpacity
               style={styles.eyeIcon}
-              onPress={() => setIsPasswordVisible(!isPasswordVisible)} // Alterna visibilidad
+              onPress={() => setIsPasswordVisible(!isPasswordVisible)}
             >
               <Ionicons
                 name={isPasswordVisible ? "eye-off" : "eye"}
@@ -121,39 +161,17 @@ export default function DeviceScreen() {
             </TouchableOpacity>
           </View>
 
-          <View><TouchableOpacity
-            style={styles.searchButton}
-            onPress={buscarDispositivo}
-          >
-            <Text style={styles.searchButtonText}>BUSCAR</Text>
-          </TouchableOpacity></View>
+          <View>
+            <TouchableOpacity
+              style={styles.searchButton}
+              onPress={buscarDispositivo}
+            >
+              <Text style={styles.searchButtonText}>BUSCAR</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </KeyboardAvoidingView>
-
-      {!keyboardVisible && (
-       <View style={styles.footer}>
-                 <TouchableOpacity onPress={() => router.push('/(tabs)/conectionscreen')}>
-                   <View style={styles.buttonFooter}>
-                     <Image source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
-                     <Text>Conexión</Text>
-                   </View>
-       
-                 </TouchableOpacity>
-                 <TouchableOpacity onPress={() => router.push('/(tabs)/panelscreen')}>
-                   <View style={styles.buttonFooter}>
-                     <Image source={require("../../assets/images/icons/iconocasa_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
-                     <Text>Inicio</Text>
-                   </View>
-                 </TouchableOpacity>
-                 <TouchableOpacity onPress={() => router.push('/(tabs)/menuscreen')}>
-                   <View style={styles.buttonFooter}>
-                     <Image source={require("../../assets/images/icons/iconocategoria_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
-                     <Text>Categorias</Text>
-                   </View>
-                 </TouchableOpacity>
-               </View>
-             )}
-           </View>
+    </View>
   );
 }
 
@@ -272,5 +290,17 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
     padding: 20,
+  },
+  titulo: {
+    width: "90%",
+    marginHorizontal: "5%",
+    alignItems: "center",
+  },
+  textoTitulo: {
+    fontSize: 27,
+    fontWeight: "800",
+    color: "#29463D",
+    marginTop: 10,
+    marginBottom: 30,
   },
 });

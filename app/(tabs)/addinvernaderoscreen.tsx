@@ -12,6 +12,7 @@ import {
   Button,
   Keyboard,
   Switch,
+  Alert,
 } from "react-native";
 
 import { useState, useEffect } from "react";
@@ -29,19 +30,23 @@ export default function DeviceScreen() {
   const [nombre, setNombre] = useState<string>("");
   const [ubicacion, setUbicacion] = useState<string>("");
   const [fechaActual, setFechaActual] = useState<Date>(fecha);
+  const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
   const router = useRouter();
 
   async function guardarInvernadero(
     invernadero: string,
-    ubicacion: string
+    ubicacion: string,
+    isEnabled: boolean
   ) {
+    const fechaActual = new Date();
     const fechaFormateada = fechaActual.toLocaleDateString("es-ES", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
     });
-
+  
     if (!invernadero || !ubicacion) {
       alert(
         "Para guardar se necesita llenar todos los campos en los que se requiere información"
@@ -50,21 +55,35 @@ export default function DeviceScreen() {
       const data = {
         nombre: nombre,
         ubicacion: ubicacion,
-        fecha_agregado: fechaFormateada
+        fecha_agregado: fechaFormateada,
+        compartir_invernadero: isEnabled,
       };
-
-      const result = await axios.post(
-        `${process.env.EXPO_PUBLIC_BASE_URL}/invernaderos`,
-        data
-      );
-
-      if (result.status === 200) {
-        alert("Datos guardados");
-      } else {
-        alert("Ocurrio un error, favor de intentar más tarde");
+  
+      try {
+        const result = await axios.post(
+          `${process.env.EXPO_PUBLIC_BASE_URL}/invernaderos`,
+          data
+        );
+  
+        console.log(result.status);
+  
+        if (result.status === 200) {
+          alert("Datos guardados");
+  
+          setNombre("");
+          setUbicacion("");
+          setIsEnabled(false);
+        }
+      } catch (error: any) {
+        if (error.response && error.response.data.error === "Ya existe un invernadero con este nombre.") {
+          Alert.alert("Advertencia", "El invernadero con ese nombre ya existe");
+        } else {
+          Alert.alert("Error", "Ha ocurrido un error, intenta más tarde");
+        }
       }
     }
   }
+  
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
 
@@ -88,9 +107,6 @@ export default function DeviceScreen() {
     };
   }, []);
 
-  const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
-  
   return (
     <View style={styles.container}>
       <KeyboardAvoidingView>
@@ -111,7 +127,7 @@ export default function DeviceScreen() {
           </View>
           <KeyboardAwareScrollView>
             <View style={styles.titulo}>
-              <Text style={styles.textoTitulo} >AGREGAR INVERNADERO</Text>
+              <Text style={styles.textoTitulo}>AGREGAR INVERNADERO</Text>
             </View>
             <View style={{ marginTop: 40 }}>
               <View style={styles.inputContainer}>
@@ -136,22 +152,25 @@ export default function DeviceScreen() {
               </View>
             </View>
             <View style={styles.switchContenedor}>
-              <View><Text style={styles.text}>Compartir invernadero con otros cultivos</Text></View>
-              <View><Switch
-                trackColor={{ false: '#767577', true: '#29463D' }}
-                thumbColor={isEnabled ? '#f5dd4b' : '#f4f3f4'}
-                onValueChange={toggleSwitch}
-                value={isEnabled}
-              /></View>
+              <View>
+                <Text style={styles.text}>
+                  Compartir invernadero con otros cultivos
+                </Text>
+              </View>
+              <View>
+                <Switch
+                  trackColor={{ false: "#767577", true: "#29463D" }}
+                  thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+                  onValueChange={toggleSwitch}
+                  value={isEnabled}
+                />
+              </View>
             </View>
             <View style={{ marginTop: 30 }}>
-              <TouchableOpacity style={styles.saveButton}
-                onPress={() =>
-                  guardarInvernadero(
-                    nombre,
-                    ubicacion
-                  )
-                }>
+              <TouchableOpacity
+                style={styles.saveButton}
+                onPress={() => guardarInvernadero(nombre, ubicacion, isEnabled)}
+              >
                 <Text style={styles.saveButtonText}>GUARDAR</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.cancelButton}>
@@ -163,22 +182,32 @@ export default function DeviceScreen() {
       </KeyboardAvoidingView>
       {!keyboardVisible && (
         <View style={styles.footer}>
-          <TouchableOpacity onPress={() => router.push('/(tabs)/conectionscreen')}>
+          <TouchableOpacity
+            onPress={() => router.push("/(tabs)/conectionscreen")}
+          >
             <View style={styles.buttonFooter}>
-              <Image source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
+              <Image
+                source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")}
+                style={styles.iconsFooter}
+              />
               <Text>Conexión</Text>
             </View>
-
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push('/(tabs)/panelscreen')}>
+          <TouchableOpacity onPress={() => router.push("/(tabs)/panelscreen")}>
             <View style={styles.buttonFooter}>
-              <Image source={require("../../assets/images/icons/iconocasa_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
+              <Image
+                source={require("../../assets/images/icons/iconocasa_Mesa de trabajo 1.png")}
+                style={styles.iconsFooter}
+              />
               <Text>Inicio</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push('/(tabs)/menuscreen')}>
+          <TouchableOpacity onPress={() => router.push("/(tabs)/menuscreen")}>
             <View style={styles.buttonFooter}>
-              <Image source={require("../../assets/images/icons/iconocategoria_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
+              <Image
+                source={require("../../assets/images/icons/iconocategoria_Mesa de trabajo 1.png")}
+                style={styles.iconsFooter}
+              />
               <Text>Categorias</Text>
             </View>
           </TouchableOpacity>
@@ -190,12 +219,12 @@ export default function DeviceScreen() {
 
 const styles = StyleSheet.create({
   buttonFooter: {
-    flexDirection: 'column',
-    width: '70%',
+    flexDirection: "column",
+    width: "70%",
     height: 80,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginHorizontal: 30
+    alignItems: "center",
+    justifyContent: "center",
+    marginHorizontal: 30,
   },
   container: {
     flex: 1,
@@ -218,15 +247,15 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   titulo: {
-    width: '90%',
-    marginHorizontal: '5%',
-    alignItems: 'center'
+    width: "90%",
+    marginHorizontal: "5%",
+    alignItems: "center",
   },
   textoTitulo: {
     fontSize: 27,
-    fontWeight: '800',
+    fontWeight: "800",
     color: "#29463D",
-    marginTop: 20
+    marginTop: 20,
   },
   backIcon: {
     alignSelf: "flex-end",
@@ -284,16 +313,16 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   switchContenedor: {
-    flexDirection: 'row',
-    width: '90%',
-    marginHorizontal: '5%',
-    alignItems: 'center'
+    flexDirection: "row",
+    width: "90%",
+    marginHorizontal: "5%",
+    alignItems: "center",
   },
   text: {
     fontSize: 17,
     fontWeight: 500,
-    color: '#29463D',
-    textAlign: 'right'
+    color: "#29463D",
+    textAlign: "right",
   },
   iconsFooter: {
     width: 40,

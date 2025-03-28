@@ -63,16 +63,10 @@ LocaleConfig.locales["fr"] = {
 LocaleConfig.defaultLocale = "fr";
 
 export default function PanelScreen({}) {
-  const [selected, setSelected] = useState("");
   const [temperatura, setTemperatura] = useState(0);
   const [humedadAmbiente, setHumedadAmbiente] = useState(0);
   const [humedadSuelo, setHumedadSuelo] = useState(0);
-
-  const Data = [
-    { value: 40, color: "#FFAB0F" },
-    { value: 45, color: "#247AFD" },
-    { value: 15, color: "#FE46A5" },
-  ];
+  const [selected, setSelected] = useState(new Date().toISOString().split("T")[0]);
 
   const router = useRouter();
 
@@ -84,7 +78,6 @@ export default function PanelScreen({}) {
       setTemperatura(result.data.usuario1.temperature);
       setHumedadAmbiente(result.data.usuario1.humidity);
       setHumedadSuelo(result.data.usuario1.soilMoisture);
-      console.log(result.data);
     } catch (error) {
       console.error(
         "Ha ocurrido un error al obtener los datos de los sensores:",
@@ -126,9 +119,7 @@ export default function PanelScreen({}) {
 
         <View style={styles.contendor}>
           <View>
-            <TouchableOpacity
-              onPress={() => router.push("/(tabs)/parametroscreen")}
-            >
+            <TouchableOpacity onPress={() => router.push(`/parametroscreen`)}>
               {/**/}
               <View style={styles.box1}>
                 <Text style={styles.titulo}>Humedad</Text>
@@ -143,7 +134,10 @@ export default function PanelScreen({}) {
                     style={{ alignItems: "center", justifyContent: "center" }}
                   >
                     <PieChart
-                      series={[{ value: humedadAmbiente, color: "#FFAB0F" }]}
+                      series={[
+                        { value: humedadAmbiente, color: "#FFAB0F" },
+                        { value: 100 - humedadAmbiente, color: "#E0E0E0" },
+                      ]}
                       widthAndHeight={120}
                     />
                     <Text
@@ -173,7 +167,18 @@ export default function PanelScreen({}) {
                     style={{ alignItems: "center", justifyContent: "center" }}
                   >
                     <PieChart
-                      series={[{ value: temperatura, color: "#FFAB0F" }]}
+                      series={[
+                        {
+                          value: temperatura,
+                          color:
+                            temperatura <= 20
+                              ? "#4CAF50"
+                              : temperatura <= 35
+                              ? "#FFAB0F"
+                              : "#FF5722",
+                        },
+                        { value: 100 - temperatura, color: "#E0E0E0" },
+                      ]}
                       widthAndHeight={120}
                     />
                     <Text
@@ -230,7 +235,7 @@ export default function PanelScreen({}) {
               source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")}
               style={styles.iconsFooter}
             />
-            <Text>Inicio</Text>
+            <Text>Conexión</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => router.push("/(tabs)/panelscreen")}>

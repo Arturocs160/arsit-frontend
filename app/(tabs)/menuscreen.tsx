@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter, useLocalSearchParams } from "expo-router";
+import { useRouter } from "expo-router";
 import { Picker } from "@react-native-picker/picker";
 import Header from "@/components/Header";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";

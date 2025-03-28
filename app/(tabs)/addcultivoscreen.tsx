@@ -21,10 +21,21 @@ import axios from "axios";
 import { Picker } from "@react-native-picker/picker";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Header from "@/components/Header";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface Invernadero {
   _id: string;
   nombre: string;
+}
+
+interface Dispositivo {
+  id: number;
+  nombreDispositivo: string;
+  password: number;
+  humidity: number;
+  soilMoisture: number;
+  temperature: number;
+  wifi: string;
 }
 
 export default function DeviceScreen() {
@@ -33,21 +44,30 @@ export default function DeviceScreen() {
   const [notas, setNotas] = useState<string>("");
   const [cultivo, setCultivo] = useState<string>("");
   const [invernaderos, setInvernaderos] = useState<Invernadero[]>([]);
-  const [invernaderoSeleccionadoId, setInvernaderoSeleccionadoId] =
-    useState(null);
+  const [dispositivos, setDispositivos] = useState<Dispositivo[]>([]);
   const [fechaActual, setFechaActual] = useState<Date>(fecha);
   const [temperaturaMin, setTemperaturaMin] = useState<number>(0);
   const [temperaturaMax, setTemperaturaMax] = useState<number>(0);
   const [humedadMax, setHumedadMax] = useState<number>(0);
   const [humedadMin, setHumedadMin] = useState<number>(0);
-  const [dispositivoSeleccionado, setDispositivoSeleccionado] = useState("1");
+  const [dispositivoSeleccionado, setDispositivoSeleccionado] = useState(null);
   const [invernaderoSeleccionado, setInvernaderoSeleccionado] = useState(null);
 
   const router = useRouter();
 
-  useEffect(() => {
-    obtenerInvernaderos();
-  }, []);
+  const dispositivoDisponible = async () => {
+    try {
+      const valor = await AsyncStorage.getItem("dispositivos");
+      if (valor !== null) {
+        const datos = JSON.parse(valor);
+        setDispositivos(datos);
+      } else {
+        console.log("No hay datos disponibles.");
+      }
+    } catch (error) {
+      console.error("Error al recuperar datos:", error);
+    }
+  };
 
   const obtenerInvernaderos = async () => {
     try {
@@ -59,6 +79,11 @@ export default function DeviceScreen() {
       console.error("Error al obtener los invernaderos:", error);
     }
   };
+
+  useEffect(() => {
+    obtenerInvernaderos();
+    dispositivoDisponible();
+  }, []);
 
   async function guardarCultivo(
     notas: string,
@@ -76,12 +101,12 @@ export default function DeviceScreen() {
     });
 
     if (temperaturaMin > temperaturaMax) {
-      alert("La temperatura máxima debe ser mayor a la minima");
+      alert("La temperatura máxima debe ser mayor a la mínima");
       return;
     }
 
     if (humedadMin > humedadMax) {
-      alert("La humeadad máxima debe ser mayor a la minima");
+      alert("La humedad máxima debe ser mayor a la mínima");
       return;
     }
 
@@ -91,53 +116,119 @@ export default function DeviceScreen() {
       !temperaturaMax ||
       !humedadMin ||
       !humedadMax ||
-      !fechaActual
+      !fechaActual ||
+      !dispositivoSeleccionado
     ) {
       alert(
         "Para guardar se necesita llenar todos los campos en los que se requiere información"
       );
-    } else if (!notas.trim()) {
-      Alert.alert("Campo faltante", "El campo de notas se encuentra vacio", [
-        {
-          text: "Aceptar",
-        },
-      ]);
-    } else if (!invernaderoSeleccionado) {
-      Alert.alert("Datos faltantes", "Debe escoger un invernadero valido", [
-        {
-          text: "Aceptar",
-        },
-      ]);
-    } else {
-      const data = {
-        cultivoId: undefined,
-        cultivo: cultivo,
-        invernaderoId: invernaderoSeleccionado,
-        fecha_siembra: fechaFormateada,
-        nota: notas,
-        temperaturaMin: temperaturaMin,
-        temperaturaMax: temperaturaMax,
-        humedadMax: humedadMax,
-        humedadMin: humedadMin,
-      };
+      return;
+    }
 
+    if (!notas.trim()) {
+      Alert.alert("Campo faltante", "El campo de notas se encuentra vacío", [
+        {
+          text: "Aceptar",
+        },
+      ]);
+      return;
+    }
+
+    if (!invernaderoSeleccionado) {
+      Alert.alert("Datos faltantes", "Debe escoger un invernadero válido", [
+        {
+          text: "Aceptar",
+        },
+      ]);
+      return;
+    }
+
+    const invernaderoPermitido = await validarInvernadero(
+      invernaderoSeleccionado
+    );
+    if (!invernaderoPermitido) {
+      Alert.alert(
+        "Restricción",
+        "Este invernadero no permite agregar nuevos cultivos",
+        [
+          {
+            text: "Aceptar",
+          },
+        ]
+      );
+      return;
+    }
+
+    async function validarInvernadero(idInvernadero: string) {
+      try {
+        const response = await axios.get(
+          `${process.env.EXPO_PUBLIC_BASE_URL}/invernaderos/${idInvernadero}`
+        );
+        return response.data.compartir_invernadero;
+      } catch (error) {
+        Alert.alert("Error", "No se pudo validar el invernadero");
+        return false;
+      }
+    }
+
+    const data = {
+      cultivo: cultivo,
+      dispositivo: dispositivoSeleccionado,
+      invernaderoId: invernaderoSeleccionado,
+      fecha_siembra: fechaFormateada,
+      nota: notas,
+      temperaturaMin: temperaturaMin,
+      temperaturaMax: temperaturaMax,
+      humedadMax: humedadMax,
+      humedadMin: humedadMin,
+    };
+
+    try {
       const result = await axios.post(
         `${process.env.EXPO_PUBLIC_BASE_URL}/cultivos`,
         data
       );
 
+      console.log(result.status);
+
       if (result.status === 200) {
-        alert("Datos guardados");
-      } else {
-        alert("Ocurrio un error, favor de intentar más tarde");
+        alert("Datos guardados correctamente");
+        setInvernaderoSeleccionado(null);
+        setCultivo("");
+        setNotas("");
+        setHumedadMax(0);
+        setHumedadMin(0);
+        setTemperaturaMax(0);
+        setTemperaturaMin(0);
       }
-      setInvernaderoSeleccionado(null);
-      setCultivo("");
-      setNotas("");
-      setHumedadMax(0);
-      setHumedadMin(0);
-      setTemperaturaMax(0);
-      setTemperaturaMin(0);
+    } catch (error: any) {
+      if (
+        error.response &&
+        error.response.data.error ===
+          "Ya existe un cultivo con ese nombre en el invernadero especificado."
+      ) {
+        Alert.alert("Advertencia", "El cultivo en ese invernadero ya existe");
+      } else if (
+        error.response &&
+        error.response.data.error ===
+          "El dispositivo ya está asignado a otro cultivo."
+      ) {
+        Alert.alert(
+          "Advertencia",
+          "El dispositivo seleccionado ya fue utilizado en otro cultivo"
+        );
+      } else if (
+        error.response &&
+        error.response.data.error ===
+          "El invernadero no permite agregar más cultivos."
+      ) {
+        Alert.alert(
+          "Restricción",
+          "Este invernadero no permite agregar nuevos cultivos"
+        );
+      } else {
+        Alert.alert("Error", "Ha ocurrido un error, intenta más tarde");
+      }
     }
   }
 
@@ -182,7 +273,7 @@ export default function DeviceScreen() {
           </View>
           <KeyboardAwareScrollView>
             <View style={styles.titulo}>
-              <Text style={styles.textoTitulo} >AGREGAR CULTIVOS</Text>
+              <Text style={styles.textoTitulo}>AGREGAR CULTIVOS</Text>
             </View>
             <View style={styles.selectDispositivo}>
               <Picker
@@ -193,10 +284,17 @@ export default function DeviceScreen() {
                   setDispositivoSeleccionado(itemValue)
                 }
               >
-                <Picker.Item label="Dispositivo 1" value="1" />
-                <Picker.Item label="Dispositivo 2" value="2" />
-                <Picker.Item label="Dispositivo 3" value="3" />
-                <Picker.Item label="Dispositivo 4" value="4" />
+                <Picker.Item label="Escoge un dispositivo" value={null} />
+                {dispositivos.map((dispositivo) => (
+                  <Picker.Item
+                    key={dispositivo.id}
+                    label={dispositivo.nombreDispositivo}
+                    value={dispositivo.id}
+                  />
+                ))}
+                <Picker.Item label="Dispositivo 2" value={2} />
+                <Picker.Item label="Dispositivo 3" value={3} />
+                <Picker.Item label="Dispositivo 4" value={4} />
               </Picker>
             </View>
             <View style={styles.inputContainer}>
@@ -430,16 +528,16 @@ const styles = StyleSheet.create({
     paddingTop: 28,
   },
   titulo: {
-    width: '90%',
-    marginHorizontal: '5%',
-    alignItems: 'center'
+    width: "90%",
+    marginHorizontal: "5%",
+    alignItems: "center",
   },
   textoTitulo: {
     fontSize: 27,
-    fontWeight: '800',
+    fontWeight: "800",
     color: "#29463D",
-    marginTop: 10, 
-    marginBottom: 10
+    marginTop: 10,
+    marginBottom: 10,
   },
   general: {
     flex: 1,

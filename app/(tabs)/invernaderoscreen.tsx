@@ -28,13 +28,8 @@ interface Invernadero {
 }
 
 export default function DeviceScreen() {
-  const fecha = new Date();
 
-  const [cultivo, setCultivo] = useState<string>("");
-  const [nombre, setNombre] = useState<string>("");
   const [invernaderos, setInvernaderos] = useState<Invernadero[]>([]);
-  const [ubicacion, setUbicacion] = useState<string>("");
-  const [fechaActual, setFechaActual] = useState<Date>(fecha);
 
   const router = useRouter();
 
@@ -53,37 +48,6 @@ export default function DeviceScreen() {
   useEffect(() => {
     obtenerInvernaderos();
   }, []);
-
-  async function guardarInvernadero(invernadero: string, ubicacion: string) {
-    const fechaFormateada = fechaActual.toLocaleDateString("es-ES", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-
-    if (!invernadero || !ubicacion) {
-      alert(
-        "Para guardar se necesita llenar todos los campos en los que se requiere información"
-      );
-    } else {
-      const data = {
-        nombre: nombre,
-        ubicacion: ubicacion,
-        fecha_agregado: fechaFormateada,
-      };
-
-      const result = await axios.post(
-        `${process.env.EXPO_PUBLIC_BASE_URL}/invernaderos`,
-        data
-      );
-
-      if (result.status === 200) {
-        alert("Datos guardados");
-      } else {
-        alert("Ocurrio un error, favor de intentar más tarde");
-      }
-    }
-  }
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
 

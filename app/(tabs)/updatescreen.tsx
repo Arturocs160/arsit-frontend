@@ -17,12 +17,22 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { Picker } from "@react-native-picker/picker";
 import Header from "@/components/Header";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface Invernadero {
   _id: string;
   nombre: string;
 }
 
+interface Dispositivo {
+  id: number;
+  nombreDispositivo: string;
+  password: number;
+  humidity: number;
+  soilMoisture: number;
+  temperature: number;
+  wifi: string;
+}
 
 export default function UpdateScreen() {
   const params = useLocalSearchParams();
@@ -39,6 +49,7 @@ export default function UpdateScreen() {
   const [invernaderoSeleccionado, setInvernaderoSeleccionado] = useState("");
   const [dispositivoSeleccionado, setDispositivoSeleccionado] = useState(null);
   const [invernaderoID, setInvernaderoID] = useState("");
+  const [dispositivos, setDispositivos] = useState<Dispositivo[]>([]);
 
   const router = useRouter();
 
@@ -63,8 +74,23 @@ export default function UpdateScreen() {
     }
   };
 
+  const dispositivoDisponible = async () => {
+    try {
+      const valor = await AsyncStorage.getItem("dispositivos");
+      if (valor !== null) {
+        const datos = JSON.parse(valor);
+        setDispositivos(datos);
+      } else {
+        console.log("No hay datos disponibles.");
+      }
+    } catch (error) {
+      console.error("Error al recuperar datos:", error);
+    }
+  };
+
   useEffect(() => {
     obtenerDetallesCultivo();
+    dispositivoDisponible();
   }, []);
 
   const obtenerDetallesCultivo = async () => {
@@ -81,7 +107,7 @@ export default function UpdateScreen() {
       setTemperaturaMax(cultivoData.parametros_optimos.temperatura.max);
       setHumedadMin(cultivoData.parametros_optimos.humedad.min);
       setHumedadMax(cultivoData.parametros_optimos.humedad.max);
-      // setDispositivoSeleccionado(cultivoData.invernaderoId);
+      setDispositivoSeleccionado(cultivoData.dispositivo);
       setInvernaderoID(cultivoData.invernaderoId);
     } catch (error) {
       console.error("Error al obtener los detalles del cultivo:", error);
@@ -93,8 +119,6 @@ export default function UpdateScreen() {
       const response = await axios.get(
         `${process.env.EXPO_PUBLIC_BASE_URL}/invernaderos/${invernaderoID}`
       );
-      // console.log(invernaderoID);
-      // console.log(response.data.nombre);
       setInvernaderoSeleccionado(response.data._id);
     } catch (error) {
       console.error("Error al obtener los invernaderos:", error);
@@ -110,7 +134,6 @@ export default function UpdateScreen() {
     humedadMax: number,
     fechaActual: Date
   ) {
-
     if (temperaturaMin > temperaturaMax) {
       alert("La temperatura máxima debe ser mayor a la minima");
       return;
@@ -144,7 +167,6 @@ export default function UpdateScreen() {
         cultivo: cultivo,
         invernaderoId: invernaderoSeleccionado,
         fecha_siembra: fechaFormateada,
-        notasId: undefined,
         nota: notas,
         temperaturaMin: temperaturaMin,
         temperaturaMax: temperaturaMax,
@@ -235,9 +257,9 @@ export default function UpdateScreen() {
             contentContainerStyle={{ flexGrow: 1 }}
             showsVerticalScrollIndicator={false}
           >
-             <View style={styles.titulo}>
-                <Text style={styles.textoTitulo} >EDITAR CULTIVOS</Text>
-              </View>
+            <View style={styles.titulo}>
+              <Text style={styles.textoTitulo}>EDITAR CULTIVOS</Text>
+            </View>
             <View style={styles.selectDispositivo}>
               <Picker
                 placeholder="Dispositivo"
@@ -247,10 +269,14 @@ export default function UpdateScreen() {
                   setDispositivoSeleccionado(itemValue)
                 }
               >
-                <Picker.Item label="Dispositivo 1" value="1" />
-                <Picker.Item label="Dispositivo 2" value="2" />
-                <Picker.Item label="Dispositivo 3" value="3" />
-                <Picker.Item label="Dispositivo 4" value="4" />
+                <Picker.Item label="Escoge un dispositivo" value={null} />
+                {dispositivos.map((dispositivo) => (
+                  <Picker.Item
+                    key={dispositivo.id}
+                    label={dispositivo.nombreDispositivo}
+                    value={dispositivo.id}
+                  />
+                ))}
               </Picker>
             </View>
             <View style={styles.inputContainer}>
@@ -514,16 +540,16 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   titulo: {
-    width: '90%',
-    marginHorizontal: '5%',
-    alignItems: 'center'
+    width: "90%",
+    marginHorizontal: "5%",
+    alignItems: "center",
   },
   textoTitulo: {
     fontSize: 27,
-    fontWeight: '800',
+    fontWeight: "800",
     color: "#29463D",
-    marginTop: 10, 
-    marginBottom: 10
+    marginTop: 10,
+    marginBottom: 10,
   },
   // header: {
   //   padding: 8,
