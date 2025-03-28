@@ -34,7 +34,7 @@ export default function DeviceScreen() {
 
   const obtenerDetallesInvernadero = async () => {
     try {
-      console.log(invernaderoId);
+      // console.log(invernaderoId);
       const response = await axios.get(
         `${process.env.EXPO_PUBLIC_BASE_URL}/invernaderos/${invernaderoId}`
       );
@@ -54,7 +54,10 @@ export default function DeviceScreen() {
       year: "numeric",
     });
 
-    if (!nombre || !ubicacion) {
+    const nombreSinEspacios = nombre.trim();
+    const ubicacionSinEspacios = ubicacion.trim();
+
+    if (!nombreSinEspacios || !ubicacionSinEspacios) {
       alert(
         "Para guardar se necesita llenar todos los campos en los que se requiere información"
       );
@@ -166,7 +169,7 @@ export default function DeviceScreen() {
             <View style={{ marginTop: 30 }}>
               <TouchableOpacity
                 style={styles.saveButton}
-                onPress={() => actualizarInvernadero(nombre, ubicacion)}
+                onPress={() => actualizarInvernadero(nombre.trim(), ubicacion.trim())}
               >
                 <Text style={styles.saveButtonText}>GUARDAR</Text>
               </TouchableOpacity>

@@ -6,11 +6,14 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  Button,
 } from "react-native";
 import axios from "axios";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 interface Recordatorio {
+  idFecha: string;
   fechaInicio: string;
   fechaFinal: string;
   nota: string;
@@ -27,37 +30,44 @@ export default function ListaRecordatorios() {
 
   const obtenerFechas = async () => {
     try {
-      const response = await axios.get(`${process.env.EXPO_PUBLIC_BASE_URL}/calendario`);
+      const response = await axios.get(
+        `${process.env.EXPO_PUBLIC_BASE_URL}/calendario`
+      );
       const data: Recordatorio[] = response.data;
-  
+
       const recordatoriosAjustados = data.map((recordatorio) => ({
         ...recordatorio,
-        fechaInicio: new Date(recordatorio.fechaInicio).toISOString(), 
-        fechaFinal: new Date(recordatorio.fechaFinal).toISOString(), 
+        fechaInicio: new Date(recordatorio.fechaInicio).toISOString(),
+        fechaFinal: new Date(recordatorio.fechaFinal).toISOString(),
       }));
-  
+
       const recordatoriosOrdenados = recordatoriosAjustados.sort(
         (a, b) =>
           new Date(a.fechaInicio).getTime() - new Date(b.fechaInicio).getTime()
       );
-  
+
       setRecordatorios(recordatoriosOrdenados);
     } catch (error) {
       console.error("Error al obtener los recordatorios:", error);
     }
   };
-  
 
-  const ajustarFechaLocal = (fechaISO: string): Date => {
-    const fecha = new Date(fechaISO);
-    const diferenciaMinutos = fecha.getTimezoneOffset();
-    fecha.setMinutes(fecha.getMinutes() - diferenciaMinutos); 
-    return fecha;
+  const borrarRecordatorio = async (fechaInicio: string) => {
+    try {
+      const response = await axios.delete(
+        `${process.env.EXPO_PUBLIC_BASE_URL}/calendario/${fechaInicio}`
+      );
+      if (response.status === 200) {
+        console.log("Recordatorio eliminado exitosamente");
+        obtenerFechas();
+      }
+    } catch (error) {
+      console.error("Error al borrar el recordatorio:", error);
+    }
   };
-  
-  
+
   const formatearFecha = (fechaISO: string): string => {
-    const fecha = ajustarFechaLocal(fechaISO);
+    const fecha = new Date(fechaISO);
     const opciones: Intl.DateTimeFormatOptions = {
       year: "numeric",
       month: "long",
@@ -65,27 +75,38 @@ export default function ListaRecordatorios() {
     };
     return fecha.toLocaleDateString("es-MX", opciones);
   };
-  
+
   return (
     <View style={styles.container}>
       <View style={styles.general}>
         <Text style={styles.header}>Lista de Recordatorios</Text>
         <ScrollView
-          contentContainerStyle={[styles.scrollContainer, { paddingBottom: 100 }]}
+          contentContainerStyle={[
+            styles.scrollContainer,
+            { paddingBottom: 100 },
+          ]}
         >
           {recordatorios.map((recordatorio, index) => (
-            <View key={index} style={styles.card}>
-              <Text style={styles.text}>
-                <Text style={styles.bold}>Inicio:</Text>{" "}
-                {formatearFecha(recordatorio.fechaInicio)}
-              </Text>
-              <Text style={styles.text}>
-                <Text style={styles.bold}>Fin:</Text>{" "}
-                {formatearFecha(recordatorio.fechaFinal)}
-              </Text>
-              <Text style={styles.text}>
-                <Text style={styles.bold}>Nota:</Text> {recordatorio.nota}
-              </Text>
+            <View key={index} style={styles.cardContainer}>
+              <View style={styles.card}>
+                <Text style={styles.text}>
+                  <Text style={styles.bold}>Inicio:</Text>{" "}
+                  {formatearFecha(recordatorio.fechaInicio)}
+                </Text>
+                <Text style={styles.text}>
+                  <Text style={styles.bold}>Fin:</Text>{" "}
+                  {formatearFecha(recordatorio.fechaFinal)}
+                </Text>
+                <Text style={styles.text}>
+                  <Text style={styles.bold}>Nota:</Text> {recordatorio.nota}
+                </Text>
+              </View>
+              <TouchableOpacity
+                style={{ marginLeft: 8, alignItems: "center", marginTop: 8 }}
+                onPress={() => borrarRecordatorio(recordatorio.fechaInicio)}
+              >
+                <Ionicons name="trash" size={20} color="#29463D" />
+              </TouchableOpacity>
             </View>
           ))}
         </ScrollView>
@@ -147,15 +168,19 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   scrollContainer: {
-    paddingBottom: 16, // Espacio regular para el contenido
+    paddingBottom: 16,
   },
-  card: {
+  cardContainer: {
     backgroundColor: "#f8f9fa",
-    padding: 16,
+    flexDirection: "row",
     borderRadius: 8,
     marginBottom: 16,
     borderWidth: 1,
     borderColor: "#dddddd",
+  },
+  card: {
+    padding: 16,
+    width: "90%",
   },
   text: {
     fontSize: 16,
@@ -164,12 +189,6 @@ const styles = StyleSheet.create({
   },
   bold: {
     fontWeight: "bold",
-  },
-  noData: {
-    textAlign: "center",
-    fontSize: 16,
-    color: "#999999",
-    marginTop: 20,
   },
   footer: {
     flexDirection: "row",

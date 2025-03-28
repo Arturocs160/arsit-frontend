@@ -108,11 +108,11 @@ export default function PanelScreen({}) {
             <Text style={styles.welcome}>Bienvenido</Text>
           </View>
         </View>
-        <View style={styles.barraDispositivos}>
+        {/* <View style={styles.barraDispositivos}>
           <Text>Dispositivo 1</Text>
           <Text>Dispositivo 2</Text>
           <Text>Dispositivo 3</Text>
-        </View>
+        </View> */}
         <View style={styles.clima}>
           <Weather />
         </View>

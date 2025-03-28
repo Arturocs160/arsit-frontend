@@ -47,7 +47,7 @@ export default function DeviceScreen() {
   };
 
   const buscarDispositivo = async () => {
-    if (wifi && password) {
+    if (wifi.trim() && password.trim()) {
       try {
         const result = await axios.get(
           `${process.env.EXPO_PUBLIC_BASE_URL}/sensores/dispositivos`,
@@ -58,7 +58,10 @@ export default function DeviceScreen() {
 
         const dispositivos = result.data;
 
-        if (dispositivos) {
+        // console.log(dispositivos);
+        // console.log(dispositivos);
+
+        if (dispositivos.length > 0) {
           Alert.alert(
             "Conexion establecida",
             `Dispositivos encontrados con la red encontrada: ${dispositivos[0].wifi}`,
@@ -73,6 +76,7 @@ export default function DeviceScreen() {
           Alert.alert(
             "No se encontraron dispositivos con la red proporcionada"
           );
+          return;
         }
 
         guardarDispositivos(dispositivos);
@@ -92,7 +96,7 @@ export default function DeviceScreen() {
   const guardarDispositivos = async (dispositivos: any) => {
     try {
       await AsyncStorage.setItem("dispositivos", JSON.stringify(dispositivos));
-      console.log("Dispositivos guardados correctamente");
+      // console.log("Dispositivos guardados correctamente");
     } catch (error) {
       console.error("Error al guardar dispositivos:", error);
     }

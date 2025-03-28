@@ -100,24 +100,31 @@ export default function DeviceScreen() {
       year: "numeric",
     });
 
-    if (temperaturaMin > temperaturaMax) {
+    if (temperaturaMin >= temperaturaMax) {
       alert("La temperatura máxima debe ser mayor a la mínima");
       return;
     }
 
-    if (humedadMin > humedadMax) {
+    if (humedadMin >= humedadMax) {
       alert("La humedad máxima debe ser mayor a la mínima");
       return;
     }
 
+    if (!dispositivoSeleccionado) {
+      Alert.alert("Dispositivo no seleccionado", "Selecciona un dispositivo");
+    }
+
+    if (!invernaderoSeleccionado) {
+      Alert.alert("Invernadero no seleccionado", "Selecciona un invernadero");
+    }
+
     if (
-      !cultivo ||
+      !cultivo.trim() ||
       !temperaturaMin ||
       !temperaturaMax ||
       !humedadMin ||
       !humedadMax ||
-      !fechaActual ||
-      !dispositivoSeleccionado
+      !fechaActual    
     ) {
       alert(
         "Para guardar se necesita llenar todos los campos en los que se requiere información"
@@ -189,8 +196,6 @@ export default function DeviceScreen() {
         data
       );
 
-      console.log(result.status);
-
       if (result.status === 200) {
         alert("Datos guardados correctamente");
         setInvernaderoSeleccionado(null);
@@ -200,6 +205,7 @@ export default function DeviceScreen() {
         setHumedadMin(0);
         setTemperaturaMax(0);
         setTemperaturaMin(0);
+        setDispositivoSeleccionado(null);
       }
     } catch (error: any) {
       if (
@@ -277,14 +283,18 @@ export default function DeviceScreen() {
             </View>
             <View style={styles.selectDispositivo}>
               <Picker
-                placeholder="Dispositivo"
+                placeholder="Dispositivo *"
                 selectedValue={dispositivoSeleccionado}
                 style={styles.picker}
-                onValueChange={(itemValue) =>
-                  setDispositivoSeleccionado(itemValue)
-                }
+                onValueChange={(itemValue) => {
+                  if (itemValue === null) {
+                    setDispositivoSeleccionado(null);
+                  } else {
+                    setDispositivoSeleccionado(itemValue);
+                  }
+                }}
               >
-                <Picker.Item label="Escoge un dispositivo" value={null} />
+                <Picker.Item label="Escoge un dispositivo *" value={null} />
                 {dispositivos.map((dispositivo) => (
                   <Picker.Item
                     key={dispositivo.id}
@@ -301,14 +311,19 @@ export default function DeviceScreen() {
               {/* <Text style={styles.label}>Nombre</Text> */}
               <View>
                 <Picker
-                  placeholder="Invernadero"
+                  placeholder="Invernadero *"
                   selectedValue={invernaderoSeleccionado}
                   style={styles.picker}
-                  onValueChange={(itemValue) =>
-                    setInvernaderoSeleccionado(itemValue)
-                  }
+                  onValueChange={(itemValue) => {
+                    if (itemValue === null) {
+                      setInvernaderoSeleccionado(null);
+                    } else {
+                      setInvernaderoSeleccionado(itemValue);
+                    }
+                  }}
+                  
                 >
-                  <Picker.Item label="Escoge un invernadero" value={null} />
+                  <Picker.Item label="Escoge un invernadero *" value={null} />
                   {invernaderos.map((invernadero) => (
                     <Picker.Item
                       key={invernadero._id}
@@ -323,7 +338,7 @@ export default function DeviceScreen() {
               {/* <Text style={styles.label}>Cultivo</Text> */}
               <TextInput
                 style={styles.input}
-                placeholder="Cultivo"
+                placeholder="Cultivo *"
                 placeholderTextColor="#29463D"
                 value={cultivo}
                 onChangeText={setCultivo}
@@ -354,7 +369,7 @@ export default function DeviceScreen() {
               </Text>
             </View>
             <View style={styles.controlContainer}>
-              <Text style={styles.label}>Temperatura</Text>
+              <Text style={styles.label}>Temperatura *</Text>
               <View style={styles.buttons}>
                 <View style={styles.parametro}>
                   <Picker
@@ -411,7 +426,7 @@ export default function DeviceScreen() {
               </Text>
             </View>
             <View style={styles.controlContainer}>
-              <Text style={styles.label}>Humedad</Text>
+              <Text style={styles.label}>Humedad *</Text>
               <View style={styles.buttons}>
                 <View style={styles.parametro}>
                   <Picker
@@ -445,7 +460,7 @@ export default function DeviceScreen() {
             </View>
 
             <View style={styles.notesContainer}>
-              <Text style={styles.notesLabel}>Notas:</Text>
+              <Text style={styles.notesLabel}>Notas: *</Text>
               <TextInput
                 style={styles.notesText}
                 multiline

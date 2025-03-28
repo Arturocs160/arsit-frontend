@@ -46,7 +46,7 @@ export default function UpdateScreen() {
   const [temperaturaMax, setTemperaturaMax] = useState<number>(0);
   const [humedadMax, setHumedadMax] = useState<number>(0);
   const [humedadMin, setHumedadMin] = useState<number>(0);
-  const [invernaderoSeleccionado, setInvernaderoSeleccionado] = useState("");
+  const [invernaderoSeleccionado, setInvernaderoSeleccionado] = useState(null);
   const [dispositivoSeleccionado, setDispositivoSeleccionado] = useState(null);
   const [invernaderoID, setInvernaderoID] = useState("");
   const [dispositivos, setDispositivos] = useState<Dispositivo[]>([]);
@@ -134,14 +134,22 @@ export default function UpdateScreen() {
     humedadMax: number,
     fechaActual: Date
   ) {
-    if (temperaturaMin > temperaturaMax) {
+    if (temperaturaMin >= temperaturaMax) {
       alert("La temperatura máxima debe ser mayor a la minima");
       return;
     }
 
-    if (humedadMin > humedadMax) {
+    if (humedadMin >= humedadMax) {
       alert("La humeadad máxima debe ser mayor a la minima");
       return;
+    }
+
+    if (!dispositivoSeleccionado) {
+      Alert.alert("Dispositivo no seleccionado", "Selecciona un dispositivo");
+    }
+
+    if (!invernaderoSeleccionado) {
+      Alert.alert("Invernadero no seleccionado", "Selecciona un invernadero");
     }
 
     const fechaFormateada = fechaActual.toLocaleDateString("es-ES", {
@@ -151,7 +159,7 @@ export default function UpdateScreen() {
     });
 
     if (
-      !cultivo ||
+      !cultivo.trim() ||
       !temperaturaMin ||
       !temperaturaMax ||
       !humedadMin ||
@@ -265,9 +273,13 @@ export default function UpdateScreen() {
                 placeholder="Dispositivo"
                 selectedValue={dispositivoSeleccionado}
                 style={styles.picker}
-                onValueChange={(itemValue) =>
-                  setDispositivoSeleccionado(itemValue)
-                }
+                onValueChange={(itemValue) => {
+                  if (itemValue === null) {
+                    setDispositivoSeleccionado(null);
+                  } else {
+                    setDispositivoSeleccionado(itemValue);
+                  }
+                }}                
               >
                 <Picker.Item label="Escoge un dispositivo" value={null} />
                 {dispositivos.map((dispositivo) => (
@@ -277,6 +289,9 @@ export default function UpdateScreen() {
                     value={dispositivo.id}
                   />
                 ))}
+                <Picker.Item label="Dispositivo 2" value={2} />
+                <Picker.Item label="Dispositivo 3" value={3} />
+                <Picker.Item label="Dispositivo 4" value={4} />
               </Picker>
             </View>
             <View style={styles.inputContainer}>
@@ -285,9 +300,13 @@ export default function UpdateScreen() {
                 <Picker
                   selectedValue={invernaderoSeleccionado}
                   style={styles.picker}
-                  onValueChange={(itemValue) =>
-                    setInvernaderoSeleccionado(itemValue)
-                  }
+                  onValueChange={(itemValue) => {
+                    if (itemValue === null) {
+                      setInvernaderoSeleccionado(null);
+                    } else {
+                      setInvernaderoSeleccionado(itemValue);
+                    }
+                  }}
                 >
                   <Picker.Item label="Escoge un invernadero" value={null} />
                   {invernaderos.map((invernadero) => (

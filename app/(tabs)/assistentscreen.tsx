@@ -94,7 +94,7 @@ export default function DeviceScreen() {
           `${process.env.EXPO_PUBLIC_BASE_URL}/chatbot/completion`,
           data
         );
-        const newMessages = result.data.slice(1);
+        const newMessages = result.data.slice(messages.length - 2);
         setMensajes(newMessages);
         setMensaje("");
       } catch (error) {

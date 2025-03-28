@@ -36,7 +36,7 @@ export default function DeviceScreen() {
   const router = useRouter();
 
   async function guardarInvernadero(
-    invernadero: string,
+    nombre: string,
     ubicacion: string,
     isEnabled: boolean
   ) {
@@ -46,8 +46,11 @@ export default function DeviceScreen() {
       month: "2-digit",
       year: "numeric",
     });
+
+    const nombreSinEspacios = nombre.trim();
+    const ubicacionSinEspacios = ubicacion.trim();
   
-    if (!invernadero || !ubicacion) {
+    if (!nombreSinEspacios || !ubicacionSinEspacios) {
       alert(
         "Para guardar se necesita llenar todos los campos en los que se requiere información"
       );
@@ -134,7 +137,7 @@ export default function DeviceScreen() {
                 {/* <Text style={styles.label}>Cultivo</Text> */}
                 <TextInput
                   style={styles.input}
-                  placeholder="Invernadero"
+                  placeholder="Invernadero *"
                   placeholderTextColor="#29463D"
                   value={nombre}
                   onChangeText={setNombre}
@@ -144,7 +147,7 @@ export default function DeviceScreen() {
                 {/* <Text style={styles.label}>Cultivo</Text> */}
                 <TextInput
                   style={styles.input}
-                  placeholder="Ubicación"
+                  placeholder="Ubicación *"
                   placeholderTextColor="#29463D"
                   value={ubicacion}
                   onChangeText={setUbicacion}
@@ -169,7 +172,7 @@ export default function DeviceScreen() {
             <View style={{ marginTop: 30 }}>
               <TouchableOpacity
                 style={styles.saveButton}
-                onPress={() => guardarInvernadero(nombre, ubicacion, isEnabled)}
+                onPress={() => guardarInvernadero(nombre.trim(), ubicacion.trim(), isEnabled)}
               >
                 <Text style={styles.saveButtonText}>GUARDAR</Text>
               </TouchableOpacity>
