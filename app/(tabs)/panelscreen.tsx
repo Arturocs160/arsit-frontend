@@ -81,9 +81,9 @@ export default function PanelScreen({}) {
       const result = await axios.get(
         `${process.env.EXPO_PUBLIC_BASE_URL}/sensores/datosSensor`
       );
-      setTemperatura(result.data.temperature);
-      setHumedadAmbiente(result.data.humidity);
-      setHumedadSuelo(result.data.soilMoisture);
+      setTemperatura(result.data.usuario1.temperature);
+      setHumedadAmbiente(result.data.usuario1.humidity);
+      setHumedadSuelo(result.data.usuario1.soilMoisture);
       console.log(result.data);
     } catch (error) {
       console.error(
@@ -95,6 +95,12 @@ export default function PanelScreen({}) {
 
   useEffect(() => {
     obtenerDatosSensor();
+
+    const intervalo = setInterval(() => {
+      obtenerDatosSensor();
+    }, 5000);
+
+    return () => clearInterval(intervalo);
   }, []);
 
   return (
