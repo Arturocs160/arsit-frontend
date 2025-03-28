@@ -77,18 +77,19 @@ export default function DeviceScreen() {
     <View style={styles.container}>
       <KeyboardAvoidingView>
         <View style={styles.general}>
-          <View style={styles.headerContainer}>
-            <TouchableOpacity
-              onPress={() => router.push("/(tabs)/panelscreen")}
-            >
-              <Ionicons
-                name="arrow-back"
-                size={30}
-                color="#2D4B41"
-                style={styles.backIcon}
-              />
-            </TouchableOpacity>
-          </View>
+           <View style={styles.headerContainer}>
+                      <Header />
+                      <TouchableOpacity
+                        onPress={() => router.push("/(tabs)/panelscreen")}
+                      >
+                        <Ionicons
+                          name="arrow-back"
+                          size={30}
+                          color="#2D4B41"
+                          style={styles.backIcon}
+                        />
+                      </TouchableOpacity>
+                    </View>
 
           <View style={styles.inputContainer}>
             <TextInput
@@ -120,40 +121,39 @@ export default function DeviceScreen() {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity
-            style={styles.saveButton}
+          <View><TouchableOpacity
+            style={styles.searchButton}
             onPress={buscarDispositivo}
           >
-            <Text style={styles.saveButtonText}>BUSCAR</Text>
-          </TouchableOpacity>
+            <Text style={styles.searchButtonText}>BUSCAR</Text>
+          </TouchableOpacity></View>
         </View>
       </KeyboardAvoidingView>
 
       {!keyboardVisible && (
-        <View style={styles.footer}>
-          <TouchableOpacity
-            onPress={() => router.push("/(tabs)/conectionscreen")}
-          >
-            <View style={styles.buttonFooter}>
-              <Ionicons name="ios-settings-sharp" size={24} color="#29463D" />
-              <Text>Conexión</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push("/(tabs)/panelscreen")}>
-            <View style={styles.buttonFooter}>
-              <Ionicons name="ios-home" size={24} color="#29463D" />
-              <Text>Inicio</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push("/(tabs)/menuscreen")}>
-            <View style={styles.buttonFooter}>
-              <Ionicons name="ios-list" size={24} color="#29463D" />
-              <Text>Categorías</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-      )}
-    </View>
+       <View style={styles.footer}>
+                 <TouchableOpacity onPress={() => router.push('/(tabs)/conectionscreen')}>
+                   <View style={styles.buttonFooter}>
+                     <Image source={require("../../assets/images/icons/conexion_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
+                     <Text>Conexión</Text>
+                   </View>
+       
+                 </TouchableOpacity>
+                 <TouchableOpacity onPress={() => router.push('/(tabs)/panelscreen')}>
+                   <View style={styles.buttonFooter}>
+                     <Image source={require("../../assets/images/icons/iconocasa_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
+                     <Text>Inicio</Text>
+                   </View>
+                 </TouchableOpacity>
+                 <TouchableOpacity onPress={() => router.push('/(tabs)/menuscreen')}>
+                   <View style={styles.buttonFooter}>
+                     <Image source={require("../../assets/images/icons/iconocategoria_Mesa de trabajo 1.png")} style={styles.iconsFooter} />
+                     <Text>Categorias</Text>
+                   </View>
+                 </TouchableOpacity>
+               </View>
+             )}
+           </View>
   );
 }
 
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  saveButton: {
+  searchButton: {
     backgroundColor: "#29463D",
     padding: 12,
     borderRadius: 25,
@@ -223,10 +223,14 @@ const styles = StyleSheet.create({
     marginHorizontal: "5%",
     marginBottom: 23,
   },
-  saveButtonText: {
+  searchButtonText: {
     color: "#FFFFFF",
     fontWeight: "bold",
     fontSize: 20,
+  },
+  iconsFooter: {
+    width: 40,
+    height: 40,
   },
   footer: {
     flexDirection: "row",

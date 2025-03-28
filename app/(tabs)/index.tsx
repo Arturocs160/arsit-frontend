@@ -4,6 +4,7 @@ import { Image, StyleSheet, Platform, View } from 'react-native';
 import { useEffect, useState } from 'react';
 import SplashScreen from './splashscreen';
 import PanelScreen from './panelscreen';
+import ConectionScreen from './conectionscreen'
 
 export default function HomeScreen() {
   const [showSplash, setShowSplash] = useState(true)
@@ -12,7 +13,7 @@ export default function HomeScreen() {
     setTimeout(()=> {setShowSplash(false);}, 5000); 
   })
 
-  return <>{showSplash ? <SplashScreen /> : <PanelScreen />}</>
+  return <>{showSplash ? <SplashScreen /> : <ConectionScreen />}</>
 }
 
 const styles = StyleSheet.create({

@@ -11,6 +11,7 @@ import {
   Image,
   Button,
   Keyboard,
+  Switch,
 } from "react-native";
 
 import { useState, useEffect } from "react";
@@ -86,6 +87,10 @@ export default function DeviceScreen() {
       keyboardDidHideListener.remove();
     };
   }, []);
+
+  const [isEnabled, setIsEnabled] = useState(false);
+  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  
   return (
     <View style={styles.container}>
       <KeyboardAvoidingView>
@@ -130,7 +135,15 @@ export default function DeviceScreen() {
                 />
               </View>
             </View>
-
+            <View style={styles.switchContenedor}>
+              <View><Text style={styles.text}>Compartir invernadero con otros cultivos</Text></View>
+              <View><Switch
+                trackColor={{ false: '#767577', true: '#29463D' }}
+                thumbColor={isEnabled ? '#f5dd4b' : '#f4f3f4'}
+                onValueChange={toggleSwitch}
+                value={isEnabled}
+              /></View>
+            </View>
             <View style={{ marginTop: 30 }}>
               <TouchableOpacity style={styles.saveButton}
                 onPress={() =>
@@ -269,6 +282,18 @@ const styles = StyleSheet.create({
     color: "#29463D",
     fontWeight: "bold",
     fontSize: 20,
+  },
+  switchContenedor: {
+    flexDirection: 'row',
+    width: '90%',
+    marginHorizontal: '5%',
+    alignItems: 'center'
+  },
+  text: {
+    fontSize: 17,
+    fontWeight: 500,
+    color: '#29463D',
+    textAlign: 'right'
   },
   iconsFooter: {
     width: 40,
